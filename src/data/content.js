@@ -15,6 +15,12 @@ export const CONTACT = {
   reg: 'J19/209/2011',
 }
 
+// conturile oficiale (verificate: același telefon, legate și de pe visitharghita.com)
+export const SOCIAL = [
+  ['Facebook', 'https://www.facebook.com/PensiuneaBaciuToplita/'],
+  ['Instagram', 'https://www.instagram.com/pensiuneabaciu.toplita/'],
+]
+
 export const MAPS_LINK = `https://www.google.com/maps/search/?api=1&query=${CONTACT.lat},${CONTACT.lng}`
 export const MAPS_EMBED = `https://maps.google.com/maps?q=${CONTACT.lat},${CONTACT.lng}&z=14&hl=ro&output=embed`
 
@@ -46,6 +52,7 @@ export const ROOMS = [
     beds: 'Două paturi de o persoană',
     price: 300,
     img: 'camera-twin',
+    more: ['camera-twin-2'],
     desc: 'Două paturi de o persoană, sub tavan de lemn. Bună pentru prieteni sau colegi de drum.',
   },
   {
@@ -251,8 +258,8 @@ export const PAGE_HEAD = {
   contact: {
     title: 'Contact',
     lead: 'Adresa, programul, drumul până la noi și răspunsuri la întrebările cele mai dese.',
-    img: 'iarna-drona',
-    alt: 'Pista de bob și câmpul înzăpezit din jurul pensiunii, văzute de sus',
+    img: 'fatada-lateral',
+    alt: 'Pensiunea Baciu din lateral, cu terasa de lemn și gazonul din față',
   },
 }
 
@@ -275,7 +282,7 @@ export const PHOTOS = [
   ['partie-vedere', 'Pârtia', 'Schiori pe pârtie, cu Munții Călimani înzăpeziți în depărtare'],
   ['ponei', 'Poneiul', 'Cel mai mic călăreț, pe ponei, condus de instructor prin manej'],
   ['camera-twin', 'Paturi separate', 'Camera dublă cu două paturi de o persoană, sub fereastra din acoperiș'],
-  ['iarna-padure', 'Pădurea, iarna', 'Brazii încărcați de zăpadă, de-a lungul pistei de bob'],
+  ['caprioara', 'Vecini de pădure', 'Două căprioare pe pajiștea de lângă pârtie, vara', '70% 55%'],
   ['calarie-copil', 'Primii pași în șa', 'Un copil urcat pe cal, ajutat de instructor'],
   ['terasa', 'Terasa de lemn', 'Mesele lungi de pe terasă, cu vedere spre munți'],
 ]
@@ -298,6 +305,14 @@ export const RATINGS = [
     count: 123,
     note: 'recenzii de la oaspeți cazați',
     url: 'https://travelminit.ro/pensiunea-baciu-toplita',
+  },
+  {
+    src: 'Facebook',
+    score: '4,8',
+    of: '5',
+    count: 393,
+    note: 'recenzii pe Facebook',
+    url: 'https://www.facebook.com/PensiuneaBaciuToplita/reviews/',
   },
 ]
 export const SUBSCORES = [

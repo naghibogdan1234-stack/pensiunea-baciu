@@ -164,7 +164,12 @@ export default function Gallery() {
           <div key={idx} className={`gm gm--${kind(m, idx)}`}>
             {m.map((i) => (
               <button key={i} type="button" className="gm__btn" onClick={open(i)} aria-label={l.zoom(PHOTOS[i][1])}>
-                <Img name={PHOTOS[i][0]} alt={PHOTOS[i][2]} sizes="(max-width: 760px) 80vw, 40vw" />
+                <Img
+                  name={PHOTOS[i][0]}
+                  alt={PHOTOS[i][2]}
+                  sizes="(max-width: 760px) 80vw, 40vw"
+                  style={PHOTOS[i][3] ? { objectPosition: PHOTOS[i][3] } : undefined}
+                />
                 <span className="gm__cap" aria-hidden="true">
                   <span className="gm__t">{PHOTOS[i][1]}</span>
                   <span className="gm__d">{PHOTOS[i][2]}</span>

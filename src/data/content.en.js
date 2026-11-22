@@ -183,7 +183,7 @@ const HEAD = {
   contact: {
     title: 'Contact',
     lead: 'Address, opening hours, how to get here and answers to the most common questions.',
-    alt: 'The coaster track and the snowy field around the guesthouse, seen from above',
+    alt: 'Pensiunea Baciu from the side, with the wooden terrace and the lawn in front',
   },
 }
 export const PAGE_HEAD = Object.fromEntries(Object.entries(RO.PAGE_HEAD).map(([k, v]) => [k, { ...v, ...HEAD[k] }]))
@@ -205,7 +205,7 @@ export const PHOTOS = [
   ['partie-vedere', 'The slope', 'Skiers on the slope, with the snowy Călimani Mountains in the distance'],
   ['ponei', 'The pony', 'The smallest rider on a pony, led round the arena by an instructor'],
   ['camera-twin', 'Twin beds', 'The double room with two single beds, under the roof window'],
-  ['iarna-padure', 'The forest in winter', 'Fir trees heavy with snow along the coaster track'],
+  ['caprioara', 'Forest neighbours', 'Two deer on the meadow by the slope, in summer', '70% 55%'],
   ['calarie-copil', 'First time in the saddle', 'A child on horseback, helped by an instructor'],
   ['terasa', 'The wooden terrace', 'The long tables on the terrace, facing the mountains'],
 ]
@@ -213,7 +213,7 @@ export const PHOTOS = [
 export const RATINGS = RO.RATINGS.map((r) => ({
   ...r,
   score: r.score.replace(',', '.'),
-  note: r.src === 'Google' ? 'reviews on Google' : 'reviews from staying guests',
+  note: r.src === 'Travelminit' ? 'reviews from staying guests' : `reviews on ${r.src}`,
 }))
 export const SUBSCORES = [
   ['Friendly staff', 9.8],

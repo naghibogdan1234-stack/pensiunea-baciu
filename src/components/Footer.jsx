@@ -1,4 +1,4 @@
-import { CONTACT, STAY } from '../data/content.js'
+import { CONTACT, STAY, SOCIAL } from '../data/content.js'
 import { useData } from '../data/index.js'
 import { openLegal } from '../lib.jsx'
 import { Link } from '../router.jsx'
@@ -52,6 +52,13 @@ export default function Footer() {
         <a className="foot__mail link" href={`mailto:${CONTACT.email}`}>
           {CONTACT.email}
         </a>
+        <div className="foot__social">
+          {SOCIAL.map(([n, u]) => (
+            <a key={n} className="link" href={u} target="_blank" rel="noopener noreferrer">
+              {n} ↗
+            </a>
+          ))}
+        </div>
       </div>
 
       <div className="foot__cols wrap">
