@@ -1,27 +1,75 @@
 import { useEffect, useState } from 'react'
-import { Img, scrollToId, openBooking, useLockScroll } from '../lib.jsx'
+import { Img, openBooking, useLockScroll } from '../lib.jsx'
 import { CONTACT } from '../data/content.js'
+import { useData } from '../data/index.js'
+import { Link, usePage } from '../router.jsx'
+import { useT, useLang, useSetLang, LANGS } from '../i18n.jsx'
 import Icon from './Icon.jsx'
 
-export const LINKS = [
-  ['camere', 'Camere', 'camera-matrimonial', 'Paisprezece camere, mic dejun inclus'],
-  ['restaurant', 'Restaurant', 'terasa-vedere', 'Bucate românești și terasa panoramică'],
-  ['meniu', 'Meniu', 'masa', 'Tot meniul, de răsfoit ca la masă'],
-  ['activitati', 'Activități', 'manej', 'Cai, bob, pârtii, vara și iarna'],
-  ['galerie', 'Galerie', 'panorama', 'Locul, în fotografii'],
-  ['contact', 'Contact', 'vara-drona', 'Adresă, program și hartă'],
-]
+const L = {
+  ro: {
+    menu: 'Meniu',
+    close: 'Închide',
+    book: 'Rezervă',
+    bookRoom: 'Rezervă o cameră',
+    home: 'Pensiunea Baciu, prima pagină',
+    call: 'Sună',
+    sections: 'Pagini',
+    lang: 'Limba',
+    start: 'Acasă',
+    startLine: 'Tot ce e la Baciu, pe o singură pagină',
+  },
+  en: {
+    menu: 'Menu',
+    close: 'Close',
+    book: 'Book',
+    bookRoom: 'Book a room',
+    home: 'Pensiunea Baciu, home page',
+    call: 'Call',
+    sections: 'Pages',
+    lang: 'Language',
+    start: 'Home',
+    startLine: 'Everything at Baciu, on one page',
+  },
+}
+
+export function LangSwitch({ tab = 0 }) {
+  const lang = useLang()
+  const setLang = useSetLang()
+  const l = useT(L)
+  return (
+    <div className="lang" role="group" aria-label={l.lang}>
+      {LANGS.map((k) => (
+        <button
+          key={k}
+          type="button"
+          lang={k}
+          className={k === lang ? 'on' : ''}
+          aria-pressed={k === lang}
+          tabIndex={tab}
+          onClick={() => setLang(k)}
+        >
+          {k.toUpperCase()}
+        </button>
+      ))}
+    </div>
+  )
+}
 
 export default function Nav() {
+  const page = usePage()
+  const { LINKS } = useData()
+  const l = useT(L)
   const [over, setOver] = useState(true) // deasupra pozei mari de sus
   const [small, setSmall] = useState(false)
   const [open, setOpen] = useState(false)
-  const [active, setActive] = useState('')
   const [hover, setHover] = useState(0)
+  const items = [['', l.start, 'vara-drona', l.startLine], ...LINKS]
 
   useEffect(() => {
     const on = () => {
-      setOver(window.scrollY < window.innerHeight - 90)
+      const limit = page ? window.innerHeight * 0.62 - 90 : window.innerHeight - 90
+      setOver(window.scrollY < limit)
       setSmall(window.scrollY > 60)
     }
     on()
@@ -31,16 +79,7 @@ export default function Nav() {
       window.removeEventListener('scroll', on)
       window.removeEventListener('resize', on)
     }
-  }, [])
-
-  useEffect(() => {
-    const els = LINKS.map(([id]) => document.getElementById(id)).filter(Boolean)
-    const io = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && setActive(e.target.id)), {
-      rootMargin: '-40% 0px -55% 0px',
-    })
-    els.forEach((el) => io.observe(el))
-    return () => io.disconnect()
-  }, [])
+  }, [page])
 
   useLockScroll(open)
   useEffect(() => {
@@ -50,44 +89,34 @@ export default function Nav() {
   }, [])
   useEffect(() => {
     if (open) {
-      const i = LINKS.findIndex(([id]) => id === active)
+      const i = items.findIndex(([id]) => id === page)
       setHover(i >= 0 ? i : 0)
     }
-  }, [open, active])
-
-  const goTo = (id) => (e) => {
-    e.preventDefault()
-    if (open) {
-      setOpen(false)
-      setTimeout(() => scrollToId(id), 420)
-    } else scrollToId(id)
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, page])
+  // pagina s-a schimbat: meniul se închide
+  useEffect(() => setOpen(false), [page])
 
   return (
     <>
       <header className={`nav ${over && !open ? 'nav--over' : ''} ${small ? 'nav--small' : ''} ${open ? 'nav--open' : ''}`}>
         <div className="nav__in">
           <div className="nav__start">
-            <button
-              type="button"
-              className="nav__menu"
-              aria-expanded={open}
-              aria-controls="meniu-site"
-              onClick={() => setOpen((o) => !o)}
-            >
+            <button type="button" className="nav__menu" aria-expanded={open} aria-controls="meniu-site" onClick={() => setOpen((o) => !o)}>
               <span className="nav__burger" aria-hidden="true">
                 <span />
                 <span />
               </span>
-              <span className="nav__menu-t">{open ? 'Închide' : 'Meniu'}</span>
+              <span className="nav__menu-t">{open ? l.close : l.menu}</span>
             </button>
           </div>
-          <a href="#top" className="nav__mark" onClick={goTo('top')} aria-label="Pensiunea Baciu, începutul paginii">
+          <Link to="" className="nav__mark" aria-label={l.home}>
             <span className="nav__name">Pensiunea Baciu</span>
             <span className="nav__place">Toplița · 850 m</span>
-          </a>
+          </Link>
           <div className="nav__end">
-            <a className="nav__tel" href={CONTACT.phoneHref} aria-label={`Sună: ${CONTACT.phone}`}>
+            <LangSwitch />
+            <a className="nav__tel" href={CONTACT.phoneHref} aria-label={`${l.call}: ${CONTACT.phone}`}>
               <Icon name="phone" size={17} />
               <span>{CONTACT.phone}</span>
             </a>
@@ -99,7 +128,7 @@ export default function Nav() {
                 openBooking()
               }}
             >
-              Rezervă
+              {l.book}
             </button>
           </div>
         </div>
@@ -107,26 +136,27 @@ export default function Nav() {
 
       <div id="meniu-site" className={`sheet ${open ? 'is-open' : ''}`} aria-hidden={!open} data-lenis-prevent>
         <div className="sheet__grid">
-          <nav className="sheet__links" aria-label="Secțiuni">
-            {LINKS.map(([id, label, , line], i) => (
-              <a
-                key={id}
-                href={`#${id}`}
-                onClick={goTo(id)}
+          <nav className="sheet__links" aria-label={l.sections}>
+            {items.map(([id, label, , line], i) => (
+              <Link
+                key={id || 'home'}
+                to={id}
+                onClick={() => setOpen(false)}
                 onMouseEnter={() => setHover(i)}
                 onFocus={() => setHover(i)}
-                className={`${hover === i ? 'is-hover' : ''} ${active === id ? 'is-active' : ''}`}
+                className={`${hover === i ? 'is-hover' : ''} ${page === id ? 'is-active' : ''}`}
+                aria-current={page === id ? 'page' : undefined}
                 style={{ '--i': i }}
                 tabIndex={open ? 0 : -1}
               >
                 <span className="sheet__label">{label}</span>
                 <span className="sheet__line">{line}</span>
-              </a>
+              </Link>
             ))}
           </nav>
           <div className="sheet__pic" aria-hidden="true">
-            {LINKS.map(([id, , img], i) => (
-              <div key={id} className={`sheet__img ${hover === i ? 'on' : ''}`}>
+            {items.map(([id, , img], i) => (
+              <div key={id || 'home'} className={`sheet__img ${hover === i ? 'on' : ''}`}>
                 <Img name={img} alt="" sizes="40vw" />
               </div>
             ))}
@@ -144,17 +174,20 @@ export default function Nav() {
               <Icon name="pin" size={17} /> {CONTACT.street}, Toplița
             </span>
           </div>
-          <button
-            type="button"
-            className="btn btn--brass"
-            tabIndex={open ? 0 : -1}
-            onClick={() => {
-              setOpen(false)
-              openBooking()
-            }}
-          >
-            Rezervă o cameră
-          </button>
+          <div className="sheet__end">
+            <LangSwitch tab={open ? 0 : -1} />
+            <button
+              type="button"
+              className="btn btn--brass"
+              tabIndex={open ? 0 : -1}
+              onClick={() => {
+                setOpen(false)
+                openBooking()
+              }}
+            >
+              {l.bookRoom}
+            </button>
+          </div>
         </div>
       </div>
     </>

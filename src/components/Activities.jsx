@@ -1,7 +1,30 @@
 import { useEffect, useRef, useState } from 'react'
 import { Img, Reveal, MaskText, openBooking, useMedia } from '../lib.jsx'
-import { ACTIVITIES, TARIFFS, CONTACT } from '../data/content.js'
+import { CONTACT } from '../data/content.js'
+import { useData } from '../data/index.js'
+import { useT } from '../i18n.jsx'
 import Icon from './Icon.jsx'
+
+const L = {
+  ro: {
+    h: 'Ce faci la Baciu',
+    winter: 'Iarna: pârtie la ușă, schi și seara, bob printre brazi.',
+    summer: 'Vara: cai, bob prin pădure și aer de munte.',
+    season: 'Alege anotimpul',
+    vara: 'Vara',
+    iarna: 'Iarna',
+    tariffs: 'Toate tarifele pentru activități',
+  },
+  en: {
+    h: 'Things to do at Baciu',
+    winter: 'Winter: the slope at the door, night skiing, a coaster through the firs.',
+    summer: 'Summer: horses, a coaster through the forest and mountain air.',
+    season: 'Choose the season',
+    vara: 'Summer',
+    iarna: 'Winter',
+    tariffs: 'All activity prices',
+  },
+}
 
 const defaultSeason = () => {
   const m = new Date().getMonth()
@@ -9,12 +32,13 @@ const defaultSeason = () => {
 }
 
 function SeasonSwitch({ season, onChange }) {
+  const l = useT(L)
   return (
-    <div className="season" role="radiogroup" aria-label="Alege anotimpul" data-active={season}>
+    <div className="season" role="radiogroup" aria-label={l.season} data-active={season}>
       <span className="season__pill" aria-hidden="true" />
       {[
-        ['vara', 'Vara', 'sun'],
-        ['iarna', 'Iarna', 'snow'],
+        ['vara', l.vara, 'sun'],
+        ['iarna', l.iarna, 'snow'],
       ].map(([k, l, ic]) => (
         <button key={k} type="button" role="radio" aria-checked={season === k} className={season === k ? 'on' : ''} onClick={() => onChange(k)}>
           <Icon name={ic} size={17} /> {l}
@@ -25,6 +49,8 @@ function SeasonSwitch({ season, onChange }) {
 }
 
 export default function Activities() {
+  const { ACTIVITIES, TARIFFS } = useData()
+  const l = useT(L)
   const [season, setSeason] = useState(defaultSeason)
   const list = ACTIVITIES[season]
   const [active, setActive] = useState(0)
@@ -49,17 +75,23 @@ export default function Activities() {
   }, [season, phone])
 
   const all = [...ACTIVITIES.vara, ...ACTIVITIES.iarna]
+  const tariffsRef = useRef(null)
+  const showTariffs = () => {
+    setTariffs(true)
+    setTimeout(() => {
+      const el = tariffsRef.current
+      if (el) window.__lenis ? window.__lenis.scrollTo(el, { offset: -90, duration: 1.2 }) : el.scrollIntoView({ behavior: 'smooth' })
+    }, 80)
+  }
   const current = list[active] || list[0]
 
   return (
     <section id="activitati" className="acts" aria-labelledby="act-h">
       <div className="acts__head wrap">
         <div>
-          <MaskText id="act-h" className="h2" text="Ce faci la Baciu" />
+          <MaskText id="act-h" className="h2" text={l.h} />
           <Reveal as="p" className="lead acts__lead" i={1}>
-            {season === 'iarna'
-              ? 'Iarna: pârtie la ușă, schi și seara, bob printre brazi.'
-              : 'Vara: cai, bob prin pădure și aer de munte.'}
+            {season === 'iarna' ? l.winter : l.summer}
           </Reveal>
         </div>
         <Reveal i={2}>
@@ -107,16 +139,25 @@ export default function Activities() {
                       ))}
                     </ul>
                     {a.note && <p className="act__note">{a.note}</p>}
-                    <div className="act__btns">
-                      {a.call && (
-                        <a className="btn" href={CONTACT.phoneHref} tabIndex={on ? 0 : -1}>
-                          <Icon name="phone" size={17} /> Sună: {CONTACT.phone}
-                        </a>
-                      )}
-                      <button type="button" className="btn btn--line" tabIndex={on ? 0 : -1} onClick={() => openBooking({ type: 'Cazare' })}>
-                        Rezervă o cameră
-                      </button>
-                    </div>
+                    {a.cta && (
+                      <div className="act__btns">
+                        {a.cta.map(([kind, label, type], k) =>
+                          kind === 'call' ? (
+                            <a key={k} className={`btn ${k ? 'btn--line' : ''}`} href={CONTACT.phoneHref} tabIndex={on ? 0 : -1}>
+                              <Icon name="phone" size={17} /> {label}
+                            </a>
+                          ) : kind === 'book' ? (
+                            <button key={k} type="button" className={`btn ${k ? 'btn--line' : ''}`} tabIndex={on ? 0 : -1} onClick={() => openBooking({ type })}>
+                              {label} <Icon name="arrow" size={17} />
+                            </button>
+                          ) : (
+                            <button key={k} type="button" className={`btn ${k ? 'btn--line' : 'btn--line'}`} tabIndex={on ? 0 : -1} onClick={showTariffs}>
+                              {label}
+                            </button>
+                          ),
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
               </li>
@@ -125,9 +166,9 @@ export default function Activities() {
         </ol>
       </div>
 
-      <div className="tariffs wrap">
+      <div className="tariffs wrap" ref={tariffsRef}>
         <button type="button" className="tariffs__toggle" aria-expanded={tariffs} aria-controls="tarife" onClick={() => setTariffs((t) => !t)}>
-          <span>Toate tarifele pentru activități</span>
+          <span>{l.tariffs}</span>
           <span className={`tariffs__plus ${tariffs ? 'on' : ''}`} aria-hidden="true" />
         </button>
         <div id="tarife" className={`tariffs__panel ${tariffs ? 'is-open' : ''}`} aria-hidden={!tariffs}>

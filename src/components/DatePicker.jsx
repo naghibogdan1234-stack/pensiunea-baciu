@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import Icon from './Icon.jsx'
+import { CUR, locale, useLang } from '../i18n.jsx'
 
 /* Date ca text „AAAA-LL-ZZ”, în ora locală (fără decalaje de fus orar). */
 const pad = (n) => String(n).padStart(2, '0') // taste-skill-ignore: format ISO de dată
@@ -16,13 +17,13 @@ export const addDaysISO = (s, n) => {
 }
 export const nightsBetween = (a, b) => (a && b ? Math.round((fromISO(b) - fromISO(a)) / 86400000) : 0)
 export const shortDate = (s) =>
-  s ? fromISO(s).toLocaleDateString('ro-RO', { day: 'numeric', month: 'short' }).replace('.', '') : ''
+  s ? fromISO(s).toLocaleDateString(locale(), { day: 'numeric', month: 'short' }).replace('.', '') : ''
 export const longDate = (s) =>
-  s ? fromISO(s).toLocaleDateString('ro-RO', { weekday: 'short', day: 'numeric', month: 'short' }) : ''
+  s ? fromISO(s).toLocaleDateString(locale(), { weekday: 'short', day: 'numeric', month: 'short' }) : ''
 
-const WEEK = ['L', 'Ma', 'Mi', 'J', 'V', 'S', 'D']
+const WEEK = { ro: ['L', 'Ma', 'Mi', 'J', 'V', 'S', 'D'], en: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'] }
 const monthName = (y, m) => {
-  const t = new Date(y, m, 1).toLocaleDateString('ro-RO', { month: 'long', year: 'numeric' })
+  const t = new Date(y, m, 1).toLocaleDateString(locale(), { month: 'long', year: 'numeric' })
   return t.charAt(0).toUpperCase() + t.slice(1)
 }
 
@@ -50,7 +51,7 @@ function Month({ y, m, from, to, hover, single, onPick, onHover }) {
         } ${isStart && end && !single ? 'has-end' : ''} ${!to && hover && iso === end ? 'is-preview' : ''}`}
         onClick={() => onPick(iso)}
         onMouseEnter={() => onHover(iso)}
-        aria-label={new Date(y, m, d).toLocaleDateString('ro-RO', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+        aria-label={new Date(y, m, d).toLocaleDateString(locale(), { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
         aria-pressed={isStart || isEnd}
       >
         <span>{d}</span>
@@ -61,7 +62,7 @@ function Month({ y, m, from, to, hover, single, onPick, onHover }) {
     <div className="dp__month">
       <p className="dp__title">{monthName(y, m)}</p>
       <div className="dp__week" aria-hidden="true">
-        {WEEK.map((w) => (
+        {WEEK[CUR.lang].map((w) => (
           <span key={w}>{w}</span>
         ))}
       </div>
@@ -77,6 +78,7 @@ function Month({ y, m, from, to, hover, single, onPick, onHover }) {
  * onChange({ from, to }); onDone() după ce intervalul e complet.
  */
 export default function DatePicker({ from = '', to = '', onChange, onDone, single = false, months = 2 }) {
+  const lang = useLang()
   const start = useMemo(() => {
     const d = from ? fromISO(from) : new Date()
     return { y: d.getFullYear(), m: d.getMonth() }
@@ -114,10 +116,10 @@ export default function DatePicker({ from = '', to = '', onChange, onDone, singl
 
   return (
     <div className={`dp dp--${months}`}>
-      <button type="button" className="dp__nav dp__nav--l" onClick={() => move(-1)} disabled={atMin} aria-label="Luna anterioară">
+      <button type="button" className="dp__nav dp__nav--l" onClick={() => move(-1)} disabled={atMin} aria-label={lang === 'en' ? 'Previous month' : 'Luna anterioară'}>
         <Icon name="left" size={20} />
       </button>
-      <button type="button" className="dp__nav dp__nav--r" onClick={() => move(1)} aria-label="Luna următoare">
+      <button type="button" className="dp__nav dp__nav--r" onClick={() => move(1)} aria-label={lang === 'en' ? 'Next month' : 'Luna următoare'}>
         <Icon name="right" size={20} />
       </button>
       <div className="dp__months">

@@ -1,1 +1,134 @@
-{"bob-iarna": [1200, 800], "bob-vara": [1920, 1080], "calarie-copil": [1200, 800], "calarie-instructor": [1024, 683], "calarie-manej": [1200, 800], "camera-matrimonial": [1200, 900], "camera-tripla": [1920, 1282], "camera-twin-2": [1200, 800], "camera-twin": [1200, 801], "fatada": [1240, 900], "iarna-drona": [1920, 1080], "iarna-padure": [1920, 1080], "iarna-partie-drona": [1200, 675], "loc-joaca": [1200, 801], "manej": [1920, 1282], "masa-festiva": [1200, 1600], "masa-telefon": [1152, 2048], "masa": [2048, 1152], "panorama": [1920, 861], "partie-bradul": [1200, 800], "partie-soare": [1200, 800], "partie-vedere": [1200, 664], "ponei": [683, 1024], "restaurant-geamuri": [1200, 900], "restaurant-mese": [1200, 900], "restaurant": [1200, 900], "sala-evenimente": [1200, 900], "schior": [1200, 800], "terasa-apus": [1200, 1363], "terasa-vedere": [1200, 900], "terasa": [1200, 900], "teren-sport": [1200, 900], "vara-drona": [1920, 1078]}
+{
+  "bob-iarna": [
+    1200,
+    800
+  ],
+  "bob-vara": [
+    1920,
+    1080
+  ],
+  "calarie-copil": [
+    1200,
+    800
+  ],
+  "calarie-instructor": [
+    1024,
+    683
+  ],
+  "calarie-manej": [
+    1200,
+    800
+  ],
+  "camera-matrimonial": [
+    1200,
+    900
+  ],
+  "camera-tripla": [
+    1920,
+    1282
+  ],
+  "camera-twin": [
+    1200,
+    800
+  ],
+  "fatada": [
+    1240,
+    900
+  ],
+  "iarna-drona": [
+    1920,
+    1080
+  ],
+  "iarna-padure": [
+    1920,
+    1080
+  ],
+  "iarna-partie-drona": [
+    1200,
+    675
+  ],
+  "loc-joaca": [
+    1200,
+    801
+  ],
+  "manej": [
+    1920,
+    1282
+  ],
+  "masa-festiva": [
+    1200,
+    1600
+  ],
+  "masa-telefon": [
+    1152,
+    2048
+  ],
+  "masa": [
+    2048,
+    1152
+  ],
+  "panorama": [
+    1920,
+    861
+  ],
+  "partie-bradul": [
+    1200,
+    800
+  ],
+  "partie-soare": [
+    1200,
+    800
+  ],
+  "partie-vedere": [
+    1200,
+    664
+  ],
+  "ponei": [
+    683,
+    1024
+  ],
+  "restaurant-geamuri": [
+    1200,
+    900
+  ],
+  "restaurant-mese": [
+    1200,
+    900
+  ],
+  "restaurant": [
+    1200,
+    900
+  ],
+  "sala-evenimente": [
+    1200,
+    900
+  ],
+  "schior": [
+    1200,
+    800
+  ],
+  "terasa-apus": [
+    1200,
+    1363
+  ],
+  "terasa-vedere": [
+    1200,
+    900
+  ],
+  "terasa": [
+    1200,
+    900
+  ],
+  "teren-sport": [
+    1200,
+    900
+  ],
+  "vara-drona": [
+    1920,
+    1078
+  ],
+  "camera-tripla-2": [
+    1200,
+    801
+  ]
+}

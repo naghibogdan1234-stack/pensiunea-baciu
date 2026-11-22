@@ -11,6 +11,7 @@ import '@fontsource/dm-sans/600.css'
 import './styles/base.css'
 import './styles/site.css'
 import './styles/book.css'
+import './styles/more.css'
 import App from './App.jsx'
 
 createRoot(document.getElementById('root')).render(

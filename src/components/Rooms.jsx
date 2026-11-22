@@ -1,7 +1,82 @@
 import { useEffect, useRef, useState } from 'react'
 import { Img, Reveal, MaskText, openBooking, lei, useLockScroll } from '../lib.jsx'
-import { ROOMS, AMENITIES, EXTRA_BED, DISCOUNTS, discountFor } from '../data/content.js'
+import { EXTRA_BED, DISCOUNTS, STAY, discountFor } from '../data/content.js'
+import { useData } from '../data/index.js'
+import { useT } from '../i18n.jsx'
 import Icon from './Icon.jsx'
+
+const L = {
+  ro: {
+    h: 'Camere calde, cu mic dejun inclus',
+    lead: 'Toate cele 14 camere au baie proprie, smart TV, frigider și WiFi gratuit. Alege o cameră ca să vezi pozele și prețul pentru câte nopți stai.',
+    deal: (d) => (d.nights === 5 ? 'reducere de la 5 nopți' : `reducere la ${d.nights} nopți`),
+    cardAria: (r) => `${r.name}, ${r.price} lei pe noapte. Vezi detalii`,
+    see: 'Vezi camera',
+    meta: (r) => `${r.guests} persoane · ${r.beds.toLowerCase()}`,
+    night: '/ noapte, cu mic dejun',
+    track: 'Camerele pensiunii',
+    know: 'Bine de știut',
+    k1: `Check-in de la ${STAY.checkIn}, check-out până la ${STAY.checkOut}`,
+    k2: `Pat suplimentar la cerere, ${EXTRA_BED} lei / noapte, fără mic dejun`,
+    k3: 'Rezervarea se confirmă cu un avans de 50%',
+    k4: 'Animalele de companie nu au acces în camere',
+    check: 'Verifică datele libere',
+    prev: 'Camera anterioară',
+    next: 'Camera următoare',
+    close: 'Închide',
+    alt0: (r) => `${r.name} la Pensiunea Baciu`,
+    alt1: (r) => `Încă o vedere din ${r.name.toLowerCase()}`,
+    photos: 'Poze',
+    photoN: (k, n) => `Poza ${k} din ${n}`,
+    people: 'persoane',
+    inRoom: 'În cameră',
+    howMany: 'Câte nopți?',
+    nightsAria: 'Număr de nopți',
+    less: 'O noapte mai puțin',
+    more: 'O noapte în plus',
+    nights: (n) => `${n} ${n === 1 ? 'noapte' : 'nopți'}`,
+    off: (p) => `${p}% reducere`,
+    noteOn: 'Reducerea e deja scăzută din total.',
+    noteOff: (p) => `De la 3 nopți primești ${p}% reducere.`,
+    bed: `Pat suplimentar: ${EXTRA_BED} lei / noapte.`,
+    go: 'Alege datele și rezervă',
+  },
+  en: {
+    h: 'Warm rooms, breakfast included',
+    lead: 'All 14 rooms have a private bathroom, smart TV, fridge and free WiFi. Open a room to see the photos and the price for your stay.',
+    deal: (d) => (d.nights === 5 ? 'off from 5 nights' : `off for ${d.nights} nights`),
+    cardAria: (r) => `${r.name}, ${r.price} lei a night. See details`,
+    see: 'See the room',
+    meta: (r) => `${r.guests} guests · ${r.beds.toLowerCase()}`,
+    night: 'a night, with breakfast',
+    track: 'The guesthouse rooms',
+    know: 'Good to know',
+    k1: `Check-in from ${STAY.checkIn}, check-out by ${STAY.checkOut}`,
+    k2: `Extra bed on request, ${EXTRA_BED} lei a night, without breakfast`,
+    k3: 'Bookings are confirmed with a 50% deposit',
+    k4: 'Pets are not allowed in the rooms',
+    check: 'Check availability',
+    prev: 'Previous room',
+    next: 'Next room',
+    close: 'Close',
+    alt0: (r) => `${r.name} at Pensiunea Baciu`,
+    alt1: (r) => `Another view of the ${r.name.toLowerCase()}`,
+    photos: 'Photos',
+    photoN: (k, n) => `Photo ${k} of ${n}`,
+    people: 'guests',
+    inRoom: 'In the room',
+    howMany: 'How many nights?',
+    nightsAria: 'Number of nights',
+    less: 'One night less',
+    more: 'One night more',
+    nights: (n) => `${n} ${n === 1 ? 'night' : 'nights'}`,
+    off: (p) => `${p}% off`,
+    noteOn: 'The discount is already taken off the total.',
+    noteOff: (p) => `From 3 nights you get ${p}% off.`,
+    bed: `Extra bed: ${EXTRA_BED} lei a night.`,
+    go: 'Pick dates and book',
+  },
+}
 
 /* ---------- caruselul: scroll nativ + tras cu mouse-ul pe desktop ---------- */
 function useDragScroll(ref) {
@@ -78,27 +153,28 @@ function useDragScroll(ref) {
 }
 
 function RoomCard({ room, i, onOpen, dragged }) {
+  const l = useT(L)
   return (
     <Reveal as="li" className="rcard" i={i}>
       <button
         type="button"
         className="rcard__btn"
         onClick={() => !dragged.current && onOpen(room.id)}
-        aria-label={`${room.name}, ${room.price} lei pe noapte. Vezi detalii`}
+        aria-label={l.cardAria(room)}
       >
         <span className="rcard__pic">
           <Img name={room.img} alt="" sizes="(max-width: 760px) 84vw, 40vw" />
           <span className="rcard__more">
-            Vezi camera <Icon name="arrow" size={16} />
+            {l.see} <Icon name="arrow" size={16} />
           </span>
         </span>
         <span className="rcard__txt">
           <span className="rcard__name">{room.name}</span>
           <span className="rcard__meta">
-            {room.guests} persoane · {room.beds.toLowerCase()}
+            {l.meta(room)}
           </span>
           <span className="rcard__price">
-            <strong className="num">{lei(room.price)}</strong> / noapte, cu mic dejun
+            <strong className="num">{lei(room.price)}</strong> {l.night}
           </span>
         </span>
       </button>
@@ -108,6 +184,8 @@ function RoomCard({ room, i, onOpen, dragged }) {
 
 /* ---------- panoul cu detaliile camerei ---------- */
 function RoomPanel({ id, onClose }) {
+  const { ROOMS, AMENITIES } = useData()
+  const l = useT(L)
   const open = !!id
   const [shown, setShown] = useState(id)
   const [pic, setPic] = useState(0)
@@ -144,22 +222,22 @@ function RoomPanel({ id, onClose }) {
             <Img
               key={p}
               name={p}
-              alt={k === 0 ? `${room.name} la Pensiunea Baciu` : `Încă o vedere din ${room.name.toLowerCase()}`}
+              alt={k === 0 ? l.alt0(room) : l.alt1(room)}
               sizes="580px"
               className={k === pic ? 'is-on' : ''}
             />
           ))}
-          <button ref={closeRef} type="button" className="x rpanel__x" onClick={onClose} aria-label="Închide">
+          <button ref={closeRef} type="button" className="x rpanel__x" onClick={onClose} aria-label={l.close}>
             <Icon name="close" size={20} />
           </button>
           {pics.length > 1 && (
-            <div className="rpanel__dots" role="group" aria-label="Poze">
+            <div className="rpanel__dots" role="group" aria-label={l.photos}>
               {pics.map((p, k) => (
                 <button
                   key={p}
                   type="button"
                   className={k === pic ? 'is-on' : ''}
-                  aria-label={`Poza ${k + 1} din ${pics.length}`}
+                  aria-label={l.photoN(k + 1, pics.length)}
                   aria-pressed={k === pic}
                   onClick={() => setPic(k)}
                 />
@@ -174,7 +252,7 @@ function RoomPanel({ id, onClose }) {
           </h3>
           <ul className="rpanel__meta">
             <li>
-              <Icon name="user" size={18} /> {room.guests} persoane
+              <Icon name="user" size={18} /> {room.guests} {l.people}
             </li>
             <li>
               <Icon name="bed" size={18} /> {room.beds}
@@ -182,7 +260,7 @@ function RoomPanel({ id, onClose }) {
           </ul>
           <p className="rpanel__desc">{room.desc}</p>
 
-          <h4 className="rpanel__h">În cameră</h4>
+          <h4 className="rpanel__h">{l.inRoom}</h4>
           <ul className="rpanel__am">
             {AMENITIES.map(([ic, t]) => (
               <li key={t}>
@@ -194,31 +272,28 @@ function RoomPanel({ id, onClose }) {
 
           <div className="rpanel__calc">
             <div className="rpanel__row">
-              <span className="rpanel__l">Câte nopți?</span>
-              <div className="step" role="group" aria-label="Număr de nopți">
-                <button type="button" onClick={() => setN((v) => Math.max(1, v - 1))} disabled={n <= 1} aria-label="O noapte mai puțin">
+              <span className="rpanel__l">{l.howMany}</span>
+              <div className="step" role="group" aria-label={l.nightsAria}>
+                <button type="button" onClick={() => setN((v) => Math.max(1, v - 1))} disabled={n <= 1} aria-label={l.less}>
                   −
                 </button>
                 <output className="num" aria-live="polite">
                   {n}
                 </output>
-                <button type="button" onClick={() => setN((v) => Math.min(14, v + 1))} disabled={n >= 14} aria-label="O noapte în plus">
+                <button type="button" onClick={() => setN((v) => Math.min(14, v + 1))} disabled={n >= 14} aria-label={l.more}>
                   +
                 </button>
               </div>
             </div>
             <div className="rpanel__row rpanel__row--sum">
               <span>
-                {n} {n === 1 ? 'noapte' : 'nopți'} × {lei(room.price)}
-                {pct > 0 && <em> · {pct}% reducere</em>}
+                {l.nights(n)} × {lei(room.price)}
+                {pct > 0 && <em> · {l.off(pct)}</em>}
               </span>
               <strong className="num">{lei(total)}</strong>
             </div>
             <p className="rpanel__note">
-              {pct > 0
-                ? 'Reducerea e deja scăzută din total.'
-                : `De la 3 nopți primești ${DISCOUNTS[DISCOUNTS.length - 1].pct}% reducere.`}{' '}
-              Pat suplimentar: {EXTRA_BED} lei / noapte.
+              {pct > 0 ? l.noteOn : l.noteOff(DISCOUNTS[DISCOUNTS.length - 1].pct)} {l.bed}
             </p>
           </div>
 
@@ -230,7 +305,7 @@ function RoomPanel({ id, onClose }) {
               setTimeout(() => openBooking({ type: 'Cazare', room: room.id }), 320)
             }}
           >
-            Alege datele și rezervă <Icon name="arrow" size={18} />
+            {l.go} <Icon name="arrow" size={18} />
           </button>
         </div>
       </aside>
@@ -239,6 +314,8 @@ function RoomPanel({ id, onClose }) {
 }
 
 export default function Rooms() {
+  const { ROOMS } = useData()
+  const l = useT(L)
   const track = useRef(null)
   const dragged = useDragScroll(track)
   const [prog, setProg] = useState(0)
@@ -283,45 +360,44 @@ export default function Rooms() {
   return (
     <section id="camere" className="rooms" aria-labelledby="camere-h">
       <div className="rooms__intro section wrap">
-        <MaskText id="camere-h" className="h2" text="Camere calde, cu mic dejun inclus" />
+        <MaskText id="camere-h" className="h2" text={l.h} />
         <div className="rooms__side">
           <Reveal as="p" className="lead" i={1}>
-            Toate cele 14 camere au baie proprie, smart TV, frigider și WiFi gratuit. Alege o cameră ca să vezi pozele și
-            prețul pentru câte nopți stai.
+            {l.lead}
           </Reveal>
           <Reveal as="ul" className="rooms__deals" i={2}>
             {[...DISCOUNTS].reverse().map((d) => (
               <li key={d.nights}>
-                <strong>{d.pct}%</strong> reducere {d.nights === 5 ? 'de la 5 nopți' : `la ${d.nights} nopți`}
+                <strong>{d.pct}%</strong> {l.deal(d)}
               </li>
             ))}
           </Reveal>
         </div>
       </div>
 
-      <ul ref={track} className="rooms__track" aria-label="Camerele pensiunii">
+      <ul ref={track} className="rooms__track" aria-label={l.track}>
         {ROOMS.map((r, i) => (
           <RoomCard key={r.id} room={r} i={i} onOpen={setOpenId} dragged={dragged} />
         ))}
         <Reveal as="li" className="rcard rcard--info" i={3}>
           <div className="rinfo">
-            <p className="rinfo__h">Bine de știut</p>
+            <p className="rinfo__h">{l.know}</p>
             <ul className="rinfo__list">
               <li>
-                <Icon name="coffee" size={18} /> Micul dejun e inclus în prețul fiecărei camere
+                <Icon name="clock" size={18} /> {l.k1}
               </li>
               <li>
-                <Icon name="bed" size={18} /> Pat suplimentar la cerere, {EXTRA_BED} lei / noapte, fără mic dejun
+                <Icon name="bed" size={18} /> {l.k2}
               </li>
               <li>
-                <Icon name="check" size={18} /> Rezervarea se confirmă cu un avans de 50%
+                <Icon name="check" size={18} /> {l.k3}
               </li>
               <li>
-                <Icon name="paw" size={18} /> Animalele de companie nu au acces în camere
+                <Icon name="paw" size={18} /> {l.k4}
               </li>
             </ul>
             <button type="button" className="btn btn--line rinfo__go" onClick={() => openBooking({ type: 'Cazare' })}>
-              Verifică datele libere
+              {l.check}
             </button>
           </div>
         </Reveal>
@@ -332,10 +408,10 @@ export default function Rooms() {
           <span style={{ transform: `scaleX(${0.25 + prog * 0.75})` }} />
         </div>
         <div className="rooms__arrows">
-          <button type="button" className="rarrow" onClick={() => by(-1)} disabled={ends[0]} aria-label="Camera anterioară">
+          <button type="button" className="rarrow" onClick={() => by(-1)} disabled={ends[0]} aria-label={l.prev}>
             <Icon name="left" size={20} />
           </button>
-          <button type="button" className="rarrow" onClick={() => by(1)} disabled={ends[1]} aria-label="Camera următoare">
+          <button type="button" className="rarrow" onClick={() => by(1)} disabled={ends[1]} aria-label={l.next}>
             <Icon name="right" size={20} />
           </button>
         </div>

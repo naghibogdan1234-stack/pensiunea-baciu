@@ -1,3 +1,4 @@
+import { locale } from './i18n.jsx'
 import { Fragment, useEffect, useRef, useState } from 'react'
 import dims from './imgdims.json'
 
@@ -86,7 +87,7 @@ export function Shutter({ name, alt, sizes, className = '', from = 'bottom', eag
   )
 }
 
-export function CountUp({ to, duration = 1600, format = (n) => n.toLocaleString('ro-RO') }) {
+export function CountUp({ to, duration = 1600, format = (n) => n.toLocaleString(locale()) }) {
   const [ref, inView] = useInViewOnce()
   const [val, setVal] = useState(0)
   useEffect(() => {
@@ -109,9 +110,36 @@ export function CountUp({ to, duration = 1600, format = (n) => n.toLocaleString(
 }
 
 /* ---------- Navigare ---------- */
+// pe ce pagină separată stă fiecare secțiune
+const SECTION_PAGE = {
+  camere: 'camere',
+  oferte: 'camere',
+  restaurant: 'restaurant',
+  meniu: 'restaurant',
+  activitati: 'activitati',
+  tarife: 'activitati',
+  galerie: 'galerie',
+  recenzii: 'galerie',
+  contact: 'contact',
+  intrebari: 'contact',
+}
+let pendingScroll = null
+export function takePendingScroll() {
+  const id = pendingScroll
+  pendingScroll = null
+  return id
+}
 export function scrollToId(id) {
   const el = document.getElementById(id)
-  if (!el) return
+  if (!el) {
+    // secțiunea e pe altă pagină: mergem acolo, apoi coborâm la ea
+    const page = SECTION_PAGE[id]
+    if (page !== undefined) {
+      pendingScroll = id
+      location.hash = page ? `#/${page}` : '#/'
+    }
+    return
+  }
   if (window.__lenis) window.__lenis.scrollTo(el, { offset: id === 'top' ? 0 : -70, duration: 1.4 })
   else el.scrollIntoView({ behavior: 'smooth' })
 }
@@ -150,4 +178,4 @@ export function useMedia(q) {
   return m
 }
 
-export const lei = (n) => `${Math.round(n).toLocaleString('ro-RO')} lei`
+export const lei = (n) => `${Math.round(n).toLocaleString(locale())} lei`

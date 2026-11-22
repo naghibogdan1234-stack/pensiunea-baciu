@@ -1,12 +1,66 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { PageFlip } from 'page-flip'
-import { MENU, PAGES } from '../data/menu.js'
 import { CONTACT } from '../data/content.js'
+import { dataFor } from '../data/index.js'
 import { Reveal, MaskText, useLockScroll } from '../lib.jsx'
+import { useLang } from '../i18n.jsx'
 import Icon from './Icon.jsx'
 
 const RATIO = 560 / 380 // înălțime / lățime pagină (paginarea e verificată pe acest raport)
-const CHAPTERS = PAGES.map((p, i) => (p.chapter ? { title: p.chapter, page: i } : null)).filter(Boolean)
+const chaptersOf = (PAGES) => PAGES.map((p, i) => (p.chapter ? { title: p.chapter, page: i } : null)).filter(Boolean)
+
+const L = {
+  ro: {
+    small: 'Pensiunea',
+    menu: 'Meniu',
+    welcome: 'Bun venit la masă',
+    intro: 'Bucate tradiționale românești, zilnic între 10:00 și 22:00. Prețurile sunt în lei.',
+    toc: 'Cuprins',
+    bye: 'Poftă bună!',
+    call: 'Pentru o masă rezervată, o aniversare sau un eveniment, sunați-ne:',
+    pets: 'Pentru igienă, animalele de companie nu au acces în restaurant. Vă mulțumim pentru înțelegere.',
+    listH: 'Meniul restaurantului',
+    close: 'Închide',
+    listNote: 'Prețuri în lei. Gramajele sunt cele din meniul pensiunii.',
+    cover: 'Coperta',
+    back: 'Coperta din spate',
+    pages: (a, b) => `Paginile ${a}–${b}`,
+    page: (a) => `Pagina ${a}`,
+    h: 'Meniul, pe masă',
+    lead: 'Răsfoiește-l ca la restaurant: trage de colțul paginii, apasă pe ea sau folosește săgețile.',
+    book: 'carte',
+    bookAria: 'Meniul restaurantului. Folosește butoanele de sub carte sau săgețile pentru a schimba pagina.',
+    prev: 'Pagina anterioară',
+    next: 'Pagina următoare',
+    chapters: 'Capitole',
+    asList: 'Vezi meniul ca listă',
+  },
+  en: {
+    small: 'Pensiunea',
+    menu: 'Menu',
+    welcome: 'Welcome to the table',
+    intro: 'Traditional Romanian dishes, daily from 10:00 to 22:00. Prices are in lei (RON).',
+    toc: 'Contents',
+    bye: 'Enjoy your meal!',
+    call: 'To book a table, a birthday or an event, call us:',
+    pets: 'For hygiene reasons, pets are not allowed in the restaurant. Thank you for understanding.',
+    listH: 'The restaurant menu',
+    close: 'Close',
+    listNote: 'Prices in lei (RON). Weights are those on the guesthouse menu.',
+    cover: 'Front cover',
+    back: 'Back cover',
+    pages: (a, b) => `Pages ${a}–${b}`,
+    page: (a) => `Page ${a}`,
+    h: 'The menu, on the table',
+    lead: 'Leaf through it as you would at the restaurant: drag a page corner, tap the page or use the arrows.',
+    book: 'book',
+    bookAria: 'The restaurant menu. Use the buttons below the book or the arrow keys to turn the page.',
+    prev: 'Previous page',
+    next: 'Next page',
+    chapters: 'Chapters',
+    asList: 'See the menu as a list',
+  },
+}
 
 /* ---------- paginile, ca HTML simplu (cartea nu e gestionată de React) ---------- */
 const esc = (s) =>
@@ -20,29 +74,29 @@ function itemHTML(it) {
   return `<li class="mi"><div class="mi__top"><span class="mi__name">${esc(it.n)}${inline}</span><span class="mi__price">${esc(it.p)}</span></div>${sub}</li>`
 }
 
-function pageHTML(page, i) {
+function pageHTML(page, i, { MENU, CHAPTERS, l }) {
   const no = `<span class="pg__no">${i}</span>`
   if (page.type === 'cover')
     return `<div class="pg pg--cover"><div class="cover__in">
-      <p class="cover__small">Pensiunea</p><p class="cover__name">Baciu</p>
-      <span class="cover__mark"></span><p class="cover__menu">Meniu</p>
+      <p class="cover__small">${l.small}</p><p class="cover__name">Baciu</p>
+      <span class="cover__mark"></span><p class="cover__menu">${l.menu}</p>
       <p class="cover__place">Toplița · 850 m</p></div></div>`
   if (page.type === 'back')
     return `<div class="pg pg--cover pg--back"><div class="cover__in"><p class="cover__place cover__place--static">Pensiunea Baciu · Toplița</p></div></div>`
   if (page.type === 'intro')
     return `<div class="pg pg--paper"><div class="pg__in">
-      <p class="pg__chapter">Bun venit la masă</p>
-      <p class="pg__text">Bucate tradiționale românești, zilnic între 10:00 și 22:00. Prețurile sunt în lei.</p>
-      <p class="pg__h">Cuprins</p>
+      <p class="pg__chapter">${l.welcome}</p>
+      <p class="pg__text">${l.intro}</p>
+      <p class="pg__h">${l.toc}</p>
       <ol class="toc">${CHAPTERS.map(
         (c) => `<li><button type="button" data-goto="${c.page}"><span>${esc(c.title)}</span><span>${c.page}</span></button></li>`,
       ).join('')}</ol></div>${no}</div>`
   if (page.type === 'end')
     return `<div class="pg pg--paper"><div class="pg__in pg__in--end">
-      <p class="pg__chapter pg__chapter--big">Poftă bună!</p>
-      <p class="pg__text">Pentru o masă rezervată, o aniversare sau un eveniment, sunați-ne:</p>
+      <p class="pg__chapter pg__chapter--big">${l.bye}</p>
+      <p class="pg__text">${l.call}</p>
       <p class="pg__phone">${CONTACT.phone}</p>
-      <p class="pg__text pg__text--small">Pentru igienă, animalele de companie nu au acces în restaurant. Vă mulțumim pentru înțelegere.</p>
+      <p class="pg__text pg__text--small">${l.pets}</p>
       </div>${no}</div>`
   const secs = page.sections
     .map((key) => {
@@ -54,12 +108,19 @@ function pageHTML(page, i) {
   return `<div class="pg pg--paper"><div class="pg__in">${page.chapter ? `<p class="pg__chapter">${esc(page.chapter)}</p>` : ''}${secs}</div>${no}</div>`
 }
 
-const BOOK_HTML = PAGES.map(
-  (p, i) => `<div class="leafpage" ${p.type === 'cover' || p.type === 'back' ? 'data-density="hard"' : ''}>${pageHTML(p, i)}</div>`,
-).join('')
+const bookHTML = (lang) => {
+  const { MENU, PAGES } = dataFor(lang)
+  const ctx = { MENU, CHAPTERS: chaptersOf(PAGES), l: L[lang] }
+  return PAGES.map(
+    (p, i) => `<div class="leafpage" ${p.type === 'cover' || p.type === 'back' ? 'data-density="hard"' : ''}>${pageHTML(p, i, ctx)}</div>`,
+  ).join('')
+}
 
 /* ---------- meniul ca listă, pentru citit ușor ---------- */
 function MenuList({ open, onClose }) {
+  const lang = useLang()
+  const { MENU } = dataFor(lang)
+  const l = L[lang]
   useLockScroll(open)
   useEffect(() => {
     const k = (e) => e.key === 'Escape' && onClose()
@@ -73,13 +134,13 @@ function MenuList({ open, onClose }) {
         <div className="mlist__box" role="dialog" aria-modal="true" aria-labelledby="ml-h" data-lenis-prevent>
           <div className="mlist__bar">
             <h2 id="ml-h" className="h3">
-              Meniul restaurantului
+              {l.listH}
             </h2>
-            <button type="button" className="x x--static" onClick={onClose} aria-label="Închide">
+            <button type="button" className="x x--static" onClick={onClose} aria-label={l.close}>
               <Icon name="close" />
             </button>
           </div>
-          <p className="muted mlist__note">Prețuri în lei. Gramajele sunt cele din meniul pensiunii.</p>
+          <p className="muted mlist__note">{l.listNote}</p>
           <div className="mlist__cols">
             {groups.map(([k, s]) => (
               <section key={k} className="mlist__g">
@@ -108,6 +169,10 @@ function MenuList({ open, onClose }) {
 
 /* ---------- cartea ---------- */
 export default function MenuBook() {
+  const lang = useLang()
+  const l = L[lang]
+  const { PAGES } = dataFor(lang)
+  const CHAPTERS = chaptersOf(PAGES)
   const stageRef = useRef(null)
   const holderRef = useRef(null)
   const pfRef = useRef(null)
@@ -152,7 +217,7 @@ export default function MenuBook() {
     root.className = 'bookroot'
     root.style.width = `${size.land ? size.pw * 2 : size.pw}px`
     root.style.height = `${size.ph}px`
-    root.innerHTML = BOOK_HTML
+    root.innerHTML = bookHTML(lang)
     holderRef.current.appendChild(root)
     const pf = new PageFlip(root, {
       width: size.pw,
@@ -198,7 +263,7 @@ export default function MenuBook() {
       root.remove()
       pfRef.current = null
     }
-  }, [size])
+  }, [size, lang])
 
   const next = useCallback(() => pfRef.current?.flipNext('bottom'), [])
   const prev = useCallback(() => pfRef.current?.flipPrev('bottom'), [])
@@ -239,21 +304,21 @@ export default function MenuBook() {
           : { left: 0, width: size.pw * 2 }
 
   let where
-  if (page === 0) where = 'Coperta'
-  else if (page >= total - 1) where = 'Coperta din spate'
+  if (page === 0) where = l.cover
+  else if (page >= total - 1) where = l.back
   else if (land) {
-    const l = page % 2 === 1 ? page : page - 1
-    where = `Paginile ${l}–${l + 1}`
-  } else where = `Pagina ${page}`
+    const a = page % 2 === 1 ? page : page - 1
+    where = l.pages(a, a + 1)
+  } else where = l.page(page)
 
   const activeChapter = CHAPTERS.reduce((acc, c) => (c.page <= page + (land ? 1 : 0) ? c.title : acc), null)
 
   return (
     <section id="meniu" className="menu" aria-labelledby="meniu-h">
       <div className="menu__head wrap">
-        <MaskText as="h2" id="meniu-h" className="h2" text="Meniul, pe masă" />
+        <MaskText as="h2" id="meniu-h" className="h2" text={l.h} />
         <Reveal as="p" className="menu__lead" i={1}>
-          Răsfoiește-l ca la restaurant: trage de colțul paginii, apasă pe ea sau folosește săgețile.
+          {l.lead}
         </Reveal>
       </div>
 
@@ -266,17 +331,17 @@ export default function MenuBook() {
           className="menu__book"
           style={size ? { width: land ? size.pw * 2 : size.pw, height: size.ph, transform: `translate3d(${shift}px,0,0)` } : undefined}
           role="region"
-          aria-roledescription="carte"
-          aria-label="Meniul restaurantului. Folosește butoanele de sub carte sau săgețile pentru a schimba pagina."
+          aria-roledescription={l.book}
+          aria-label={l.bookAria}
         >
           {/* taste-skill-ignore — umbra cărții pe masă */}
           <span className="menu__shadow" style={shadow} aria-hidden="true" />
           <div className="menu__holder" ref={holderRef} />
         </div>
-        <button type="button" className="pbtn pbtn--stage pbtn--l" onClick={prev} disabled={page === 0} aria-label="Pagina anterioară">
+        <button type="button" className="pbtn pbtn--stage pbtn--l" onClick={prev} disabled={page === 0} aria-label={l.prev}>
           <Icon name="left" size={24} />
         </button>
-        <button type="button" className="pbtn pbtn--stage pbtn--r" onClick={next} disabled={page >= total - 1} aria-label="Pagina următoare">
+        <button type="button" className="pbtn pbtn--stage pbtn--r" onClick={next} disabled={page >= total - 1} aria-label={l.next}>
           <Icon name="right" size={24} />
         </button>
         <p className="menu__where" aria-live="polite">
@@ -285,7 +350,7 @@ export default function MenuBook() {
       </div>
 
       <div className="menu__bar wrap">
-        <ul className="chips" aria-label="Capitole">
+        <ul className="chips" aria-label={l.chapters}>
           {CHAPTERS.map((c) => (
             <li key={c.title}>
               <button type="button" className={`chip ${activeChapter === c.title && page > 0 ? 'on' : ''}`} onClick={() => goTo(c.page)}>
@@ -295,7 +360,7 @@ export default function MenuBook() {
           ))}
         </ul>
         <button type="button" className="menu__listbtn" onClick={() => setListOpen(true)}>
-          <Icon name="list" size={18} /> Vezi meniul ca listă
+          <Icon name="list" size={18} /> {l.asList}
         </button>
       </div>
       <MenuList open={listOpen} onClose={() => setListOpen(false)} />
