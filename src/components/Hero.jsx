@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 import { motion, useScroll, useTransform } from 'motion/react'
 import { Img, openBooking } from '../lib.jsx'
 import Icon from './Icon.jsx'
+import DatePicker, { shortDate, nightsBetween } from './DatePicker.jsx'
+import { discountFor } from '../data/content.js'
 
 const SLIDES = [
   { img: 'vara-drona', alt: 'Pensiunea Baciu văzută de sus, vara, cu manejul și pădurea de brazi', cap: 'Pensiunea și manejul, vara' },
@@ -11,19 +13,30 @@ const SLIDES = [
 ]
 const DUR = 7000
 
-const todayISO = (add = 0) => {
-  const d = new Date()
-  d.setDate(d.getDate() + add)
-  return d.toISOString().slice(0, 10)
-}
-
 export default function Hero() {
   const [i, setI] = useState(0)
   const [paused, setPaused] = useState(false)
   const [from, setFrom] = useState('')
   const [to, setTo] = useState('')
   const [guests, setGuests] = useState('2')
+  const [cal, setCal] = useState(false)
   const ref = useRef(null)
+  const barRef = useRef(null)
+
+  // închide calendarul la click în afara barei sau la Escape
+  useEffect(() => {
+    if (!cal) return
+    const out = (e) => barRef.current && !barRef.current.contains(e.target) && setCal(false)
+    const key = (e) => e.key === 'Escape' && setCal(false)
+    document.addEventListener('pointerdown', out)
+    window.addEventListener('keydown', key)
+    return () => {
+      document.removeEventListener('pointerdown', out)
+      window.removeEventListener('keydown', key)
+    }
+  }, [cal])
+  const nights = nightsBetween(from, to)
+  const pct = discountFor(nights)
 
   useEffect(() => {
     if (paused) return
@@ -72,17 +85,17 @@ export default function Hero() {
           <p className="hero__sub">Cazare, bucătărie românească și aventură la 850 m, deasupra Topliței.</p>
         </div>
 
-        <form className="bookbar" onSubmit={submit} aria-label="Cerere rapidă de rezervare">
-          <label className="bookbar__f">
-            <span>Sosire</span>
-            <input type="date" value={from} min={todayISO()} onChange={(e) => setFrom(e.target.value)} />
-          </label>
-          <label className="bookbar__f">
-            <span>Plecare</span>
-            <input type="date" value={to} min={from || todayISO(1)} onChange={(e) => setTo(e.target.value)} />
-          </label>
+        <form className={`bookbar ${cal ? 'is-cal' : ''}`} onSubmit={submit} aria-label="Cerere rapidă de rezervare" ref={barRef}>
+          <button type="button" className={`bookbar__f ${cal && !from ? 'is-focus' : ''}`} onClick={() => setCal(true)} aria-expanded={cal} aria-haspopup="dialog">
+            <span className="bookbar__l">Sosire</span>
+            <span className={`bookbar__v ${from ? '' : 'is-empty'}`}>{from ? shortDate(from) : 'Alege data'}</span>
+          </button>
+          <button type="button" className={`bookbar__f ${cal && from && !to ? 'is-focus' : ''}`} onClick={() => setCal(true)} aria-expanded={cal} aria-haspopup="dialog">
+            <span className="bookbar__l">Plecare</span>
+            <span className={`bookbar__v ${to ? '' : 'is-empty'}`}>{to ? shortDate(to) : 'Alege data'}</span>
+          </button>
           <label className="bookbar__f bookbar__f--s">
-            <span>Persoane</span>
+            <span className="bookbar__l">Persoane</span>
             <select value={guests} onChange={(e) => setGuests(e.target.value)}>
               {[1, 2, 3, 4, 5, 6].map((n) => (
                 <option key={n} value={n}>
@@ -94,6 +107,55 @@ export default function Hero() {
           <button type="submit" className="btn btn--brass bookbar__go">
             Vezi prețul <Icon name="arrow" size={18} />
           </button>
+
+          <div className={`bookpop ${cal ? 'is-open' : ''}`} role="dialog" aria-label="Alege perioada" aria-hidden={!cal}>
+            {cal && (
+              <>
+                <DatePicker
+                  from={from}
+                  to={to}
+                  months={2}
+                  onChange={({ from: f, to: t }) => {
+                    setFrom(f)
+                    setTo(t)
+                  }}
+                />
+                <div className="bookpop__foot">
+                  <p className="bookpop__sum">
+                    {nights > 0 ? (
+                      <>
+                        <strong>
+                          {nights} {nights === 1 ? 'noapte' : 'nopți'}
+                        </strong>
+                        {pct ? <span> · {pct}% reducere inclusă</span> : <span> · de la 3 nopți ai 6% reducere</span>}
+                      </>
+                    ) : from ? (
+                      'Acum alege ziua plecării'
+                    ) : (
+                      'Alege ziua sosirii'
+                    )}
+                  </p>
+                  <div className="bookpop__btns">
+                    {(from || to) && (
+                      <button
+                        type="button"
+                        className="link"
+                        onClick={() => {
+                          setFrom('')
+                          setTo('')
+                        }}
+                      >
+                        Șterge
+                      </button>
+                    )}
+                    <button type="button" className="btn" onClick={() => setCal(false)} disabled={!!from && !to}>
+                      Gata
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
         </form>
 
         <div className="hero__dots" role="group" aria-label="Fotografii">

@@ -2,19 +2,16 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useLockScroll, lei, openLegal } from '../lib.jsx'
 import { CONTACT, ROOMS, EXTRA_BED, discountFor } from '../data/content.js'
 import Icon from './Icon.jsx'
+import DatePicker, { todayISO, addDaysISO, nightsBetween, longDate } from './DatePicker.jsx'
 
 const TYPES = ['Cazare', 'Masă la restaurant', 'Echitație', 'Eveniment']
-const iso = (add = 0) => {
-  const d = new Date()
-  d.setDate(d.getDate() + add)
-  return d.toISOString().slice(0, 10)
+const iso = (add = 0) => addDaysISO(todayISO(), add)
+const addDays = addDaysISO
+const fmt = (s) => {
+  if (!s) return ''
+  const [y, m, d] = s.split('-').map(Number)
+  return new Date(y, m - 1, d).toLocaleDateString('ro-RO', { day: 'numeric', month: 'long', year: 'numeric' })
 }
-const addDays = (s, n) => {
-  const d = new Date(s + 'T12:00:00')
-  d.setDate(d.getDate() + n)
-  return d.toISOString().slice(0, 10)
-}
-const fmt = (s) => (s ? new Date(s + 'T12:00:00').toLocaleDateString('ro-RO', { day: 'numeric', month: 'long', year: 'numeric' }) : '')
 
 const EMPTY = {
   type: 'Cazare',
@@ -35,6 +32,7 @@ export default function Booking() {
   const [f, setF] = useState(EMPTY)
   const [sent, setSent] = useState(null)
   const [copied, setCopied] = useState(false)
+  const [cal, setCal] = useState(false)
   const first = useRef(null)
   useLockScroll(open)
 
@@ -54,6 +52,7 @@ export default function Booking() {
         }
         return n
       })
+      setCal(false)
       setOpen(true)
     }
     window.addEventListener('baciu:book', on)
@@ -70,10 +69,7 @@ export default function Booking() {
   const set = (k) => (e) => setF((s) => ({ ...s, [k]: e.target.type === 'checkbox' ? e.target.checked : e.target.value }))
   const stay = f.type === 'Cazare'
   const room = ROOMS.find((r) => r.id === f.room) || ROOMS[0]
-  const nights = useMemo(() => {
-    if (!f.from || !f.to) return 0
-    return Math.max(0, Math.round((new Date(f.to) - new Date(f.from)) / 86400000))
-  }, [f.from, f.to])
+  const nights = useMemo(() => Math.max(0, nightsBetween(f.from, f.to)), [f.from, f.to])
   const pct = discountFor(nights)
   const base = room.price * nights
   const off = Math.round((base * pct) / 100)
@@ -101,6 +97,10 @@ export default function Booking() {
 
   const submit = (e) => {
     e.preventDefault()
+    if (stay && (!f.from || !f.to)) {
+      setCal(true)
+      return
+    }
     const text = message()
     const subject = `Cerere ${f.type.toLowerCase()} – ${f.name}`
     window.location.href = `mailto:${CONTACT.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}`
@@ -164,17 +164,40 @@ export default function Booking() {
               ))}
             </fieldset>
 
+            <div className="dates">
+              <button type="button" className={`dates__box ${cal ? 'is-open' : ''}`} onClick={() => setCal((c) => !c)} aria-expanded={cal}>
+                <span className="dates__cell">
+                  <span className="dates__l">{stay ? 'Sosire' : 'Data'}</span>
+                  <span className="dates__v">{f.from ? longDate(f.from) : 'Alege'}</span>
+                </span>
+                {stay && (
+                  <span className="dates__cell">
+                    <span className="dates__l">Plecare</span>
+                    <span className="dates__v">{f.to ? longDate(f.to) : 'Alege'}</span>
+                  </span>
+                )}
+                <span className="dates__ico" aria-hidden="true">
+                  <Icon name="cal" size={18} />
+                </span>
+              </button>
+              <div className={`dates__cal ${cal ? 'is-open' : ''}`}>
+                <div className="dates__inner">
+                  {cal && (
+                    <DatePicker
+                      from={f.from}
+                      to={stay ? f.to : ''}
+                      single={!stay}
+                      months={1}
+                      onChange={({ from, to }) => setF((s) => ({ ...s, from, to }))}
+                      onDone={() => setTimeout(() => setCal(false), 260)}
+                    />
+                  )}
+                </div>
+              </div>
+            </div>
+
             <div className="form__grid">
-              <label className="field">
-                <span>{stay ? 'Sosire' : 'Data'}</span>
-                <input type="date" min={iso()} value={f.from} onChange={set('from')} required={stay} />
-              </label>
-              {stay ? (
-                <label className="field">
-                  <span>Plecare</span>
-                  <input type="date" min={f.from ? addDays(f.from, 1) : iso(1)} value={f.to} onChange={set('to')} required />
-                </label>
-              ) : (
+              {!stay && (
                 <label className="field">
                   <span>Persoane</span>
                   <input type="number" min="1" max="300" value={f.people} onChange={set('people')} />
@@ -187,7 +210,7 @@ export default function Booking() {
                     <select value={f.room} onChange={set('room')}>
                       {ROOMS.map((r) => (
                         <option key={r.id} value={r.id}>
-                          {r.name} · {r.price} lei / noapte
+                          {r.short} · {r.guests} pers. · {r.price} lei
                         </option>
                       ))}
                     </select>

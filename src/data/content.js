@@ -45,6 +45,7 @@ export const ROOMS = [
     beds: 'Două paturi de o persoană',
     price: 300,
     img: 'camera-twin',
+    more: ['camera-twin-2'],
     desc: 'Două paturi de o persoană, sub tavan de lemn. Bună pentru prieteni sau colegi de drum.',
   },
   {

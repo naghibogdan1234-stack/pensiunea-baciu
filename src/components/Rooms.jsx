@@ -1,31 +1,178 @@
-import { useRef } from 'react'
-import { motion, useScroll, useTransform } from 'motion/react'
-import { Img, Reveal, MaskText, openBooking, lei } from '../lib.jsx'
-import { ROOMS, AMENITIES, EXTRA_BED } from '../data/content.js'
+import { useEffect, useRef, useState } from 'react'
+import { Img, Reveal, MaskText, openBooking, lei, useLockScroll } from '../lib.jsx'
+import { ROOMS, AMENITIES, EXTRA_BED, DISCOUNTS, discountFor } from '../data/content.js'
 import Icon from './Icon.jsx'
 
-function RoomFrame({ room, index, count }) {
-  const ref = useRef(null)
-  // poza se apropie ușor cât timp camera e pe ecran; camera de dedesubt se micșorează când vine următoarea
-  const { scrollYProgress: inP } = useScroll({ target: ref, offset: ['start end', 'start start'] })
-  const { scrollYProgress: outP } = useScroll({ target: ref, offset: ['start start', 'end start'] })
-  const imgScale = useTransform(inP, [0, 1], [1.18, 1.02])
-  const last = index === count - 1
-  const frameScale = useTransform(outP, [0, 1], [1, last ? 1 : 0.92])
-  const dim = useTransform(outP, [0, 1], [0, last ? 0 : 0.55])
+/* ---------- caruselul: scroll nativ + tras cu mouse-ul pe desktop ---------- */
+function useDragScroll(ref) {
+  const moved = useRef(false)
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    let down = false
+    let x0 = 0
+    let s0 = 0
+    let last = 0
+    let lastT = 0
+    let v = 0
+    let raf = 0
+    const onDown = (e) => {
+      if (e.pointerType !== 'mouse' || e.button !== 0) return
+      cancelAnimationFrame(raf)
+      down = true
+      moved.current = false
+      x0 = e.clientX
+      s0 = el.scrollLeft
+      last = e.clientX
+      lastT = performance.now()
+      v = 0
+    }
+    const onMove = (e) => {
+      if (!down) return
+      const dx = e.clientX - x0
+      if (!moved.current && Math.abs(dx) > 6) {
+        moved.current = true
+        el.classList.add('is-drag')
+        el.setPointerCapture(e.pointerId)
+      }
+      if (!moved.current) return
+      el.scrollLeft = s0 - dx
+      const t = performance.now()
+      v = (e.clientX - last) / Math.max(1, t - lastT)
+      last = e.clientX
+      lastT = t
+    }
+    const onUp = () => {
+      if (!down) return
+      down = false
+      el.classList.remove('is-drag')
+      // inerție scurtă, apoi lăsăm scroll-snap să așeze cardul
+      let vel = -v * 16
+      const step = () => {
+        if (Math.abs(vel) < 0.6) {
+          el.classList.remove('is-coast')
+          return
+        }
+        el.scrollLeft += vel
+        vel *= 0.92
+        raf = requestAnimationFrame(step)
+      }
+      if (moved.current && Math.abs(vel) > 2) {
+        el.classList.add('is-coast')
+        raf = requestAnimationFrame(step)
+      }
+    }
+    el.addEventListener('pointerdown', onDown)
+    el.addEventListener('pointermove', onMove)
+    el.addEventListener('pointerup', onUp)
+    el.addEventListener('pointercancel', onUp)
+    return () => {
+      cancelAnimationFrame(raf)
+      el.removeEventListener('pointerdown', onDown)
+      el.removeEventListener('pointermove', onMove)
+      el.removeEventListener('pointerup', onUp)
+      el.removeEventListener('pointercancel', onUp)
+    }
+  }, [ref])
+  return moved
+}
+
+function RoomCard({ room, i, onOpen, dragged }) {
+  return (
+    <Reveal as="li" className="rcard" i={i}>
+      <button
+        type="button"
+        className="rcard__btn"
+        onClick={() => !dragged.current && onOpen(room.id)}
+        aria-label={`${room.name}, ${room.price} lei pe noapte. Vezi detalii`}
+      >
+        <span className="rcard__pic">
+          <Img name={room.img} alt="" sizes="(max-width: 760px) 84vw, 40vw" />
+          <span className="rcard__more">
+            Vezi camera <Icon name="arrow" size={16} />
+          </span>
+        </span>
+        <span className="rcard__txt">
+          <span className="rcard__name">{room.name}</span>
+          <span className="rcard__meta">
+            {room.guests} persoane · {room.beds.toLowerCase()}
+          </span>
+          <span className="rcard__price">
+            <strong className="num">{lei(room.price)}</strong> / noapte, cu mic dejun
+          </span>
+        </span>
+      </button>
+    </Reveal>
+  )
+}
+
+/* ---------- panoul cu detaliile camerei ---------- */
+function RoomPanel({ id, onClose }) {
+  const open = !!id
+  const [shown, setShown] = useState(id)
+  const [pic, setPic] = useState(0)
+  const [n, setN] = useState(3)
+  const closeRef = useRef(null)
+  useLockScroll(open)
+
+  useEffect(() => {
+    if (id) {
+      setShown(id)
+      setPic(0)
+      setTimeout(() => closeRef.current?.focus({ preventScroll: true }), 380)
+    }
+  }, [id])
+  useEffect(() => {
+    if (!open) return
+    const k = (e) => e.key === 'Escape' && onClose()
+    window.addEventListener('keydown', k)
+    return () => window.removeEventListener('keydown', k)
+  }, [open, onClose])
+
+  const room = ROOMS.find((r) => r.id === shown) || ROOMS[0]
+  const pics = [room.img, ...(room.more || [])]
+  const pct = discountFor(n)
+  const base = room.price * n
+  const total = base - Math.round((base * pct) / 100)
 
   return (
-    <article ref={ref} className={`room room--${index}`} style={{ zIndex: index + 1 }} aria-labelledby={`room-${room.id}`}>
-      <motion.div className="room__frame" style={{ scale: frameScale }}>
-        <motion.div className="room__img" style={{ scale: imgScale }}>
-          <Img name={room.img} alt={`${room.name} la Pensiunea Baciu`} sizes="100vw" />
-        </motion.div>
-        <motion.span className="room__dim" style={{ opacity: dim }} aria-hidden="true" />
-        <div className="room__card">
-          <h3 id={`room-${room.id}`} className="room__name">
+    <div className={`drawer rpanel ${open ? 'is-open' : ''}`} aria-hidden={!open}>
+      <div className="drawer__back" onClick={onClose} />
+      <aside className="drawer__panel rpanel__panel" role="dialog" aria-modal="true" aria-labelledby="rp-h" data-lenis-prevent>
+        <div className="rpanel__pics">
+          {pics.map((p, k) => (
+            <Img
+              key={p}
+              name={p}
+              alt={k === 0 ? `${room.name} la Pensiunea Baciu` : `Încă o vedere din ${room.name.toLowerCase()}`}
+              sizes="580px"
+              className={k === pic ? 'is-on' : ''}
+            />
+          ))}
+          <button ref={closeRef} type="button" className="x rpanel__x" onClick={onClose} aria-label="Închide">
+            <Icon name="close" size={20} />
+          </button>
+          {pics.length > 1 && (
+            <div className="rpanel__dots" role="group" aria-label="Poze">
+              {pics.map((p, k) => (
+                <button
+                  key={p}
+                  type="button"
+                  className={k === pic ? 'is-on' : ''}
+                  aria-label={`Poza ${k + 1} din ${pics.length}`}
+                  aria-pressed={k === pic}
+                  onClick={() => setPic(k)}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="rpanel__body">
+          <h3 id="rp-h" className="rpanel__name">
             {room.name}
           </h3>
-          <ul className="room__meta">
+          <ul className="rpanel__meta">
             <li>
               <Icon name="user" size={18} /> {room.guests} persoane
             </li>
@@ -33,12 +180,10 @@ function RoomFrame({ room, index, count }) {
               <Icon name="bed" size={18} /> {room.beds}
             </li>
           </ul>
-          <p className="room__desc">{room.desc}</p>
-          <p className="room__price">
-            <strong className="num">{lei(room.price)}</strong>
-            <span> / noapte, cu mic dejun</span>
-          </p>
-          <ul className="room__am">
+          <p className="rpanel__desc">{room.desc}</p>
+
+          <h4 className="rpanel__h">În cameră</h4>
+          <ul className="rpanel__am">
             {AMENITIES.map(([ic, t]) => (
               <li key={t}>
                 <Icon name={ic} size={18} />
@@ -46,47 +191,157 @@ function RoomFrame({ room, index, count }) {
               </li>
             ))}
           </ul>
-          <button type="button" className="btn room__go" onClick={() => openBooking({ type: 'Cazare', room: room.id })}>
-            Rezervă camera <Icon name="arrow" size={18} />
+
+          <div className="rpanel__calc">
+            <div className="rpanel__row">
+              <span className="rpanel__l">Câte nopți?</span>
+              <div className="step" role="group" aria-label="Număr de nopți">
+                <button type="button" onClick={() => setN((v) => Math.max(1, v - 1))} disabled={n <= 1} aria-label="O noapte mai puțin">
+                  −
+                </button>
+                <output className="num" aria-live="polite">
+                  {n}
+                </output>
+                <button type="button" onClick={() => setN((v) => Math.min(14, v + 1))} disabled={n >= 14} aria-label="O noapte în plus">
+                  +
+                </button>
+              </div>
+            </div>
+            <div className="rpanel__row rpanel__row--sum">
+              <span>
+                {n} {n === 1 ? 'noapte' : 'nopți'} × {lei(room.price)}
+                {pct > 0 && <em> · {pct}% reducere</em>}
+              </span>
+              <strong className="num">{lei(total)}</strong>
+            </div>
+            <p className="rpanel__note">
+              {pct > 0
+                ? 'Reducerea e deja scăzută din total.'
+                : `De la 3 nopți primești ${DISCOUNTS[DISCOUNTS.length - 1].pct}% reducere.`}{' '}
+              Pat suplimentar: {EXTRA_BED} lei / noapte.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            className="btn rpanel__go"
+            onClick={() => {
+              onClose()
+              setTimeout(() => openBooking({ type: 'Cazare', room: room.id }), 320)
+            }}
+          >
+            Alege datele și rezervă <Icon name="arrow" size={18} />
           </button>
         </div>
-      </motion.div>
-    </article>
+      </aside>
+    </div>
   )
 }
 
 export default function Rooms() {
+  const track = useRef(null)
+  const dragged = useDragScroll(track)
+  const [prog, setProg] = useState(0)
+  const [ends, setEnds] = useState([true, false])
+  const [openId, setOpenId] = useState(null)
+
+  useEffect(() => {
+    const el = track.current
+    if (!el) return
+    let raf = 0
+    const upd = () => {
+      raf = 0
+      const max = el.scrollWidth - el.clientWidth
+      const p = max > 0 ? el.scrollLeft / max : 0
+      setProg(p)
+      setEnds([el.scrollLeft < 8, el.scrollLeft > max - 8])
+      // pozele alunecă puțin în cadru cât timp rândul se mișcă
+      el.querySelectorAll('.rcard__pic img').forEach((img) => {
+        const r = img.parentElement.getBoundingClientRect()
+        const c = (r.left + r.width / 2 - window.innerWidth / 2) / window.innerWidth
+        img.style.transform = `translateX(${(-c * 6).toFixed(2)}%) scale(1.12)`
+      })
+    }
+    const on = () => raf || (raf = requestAnimationFrame(upd))
+    upd()
+    el.addEventListener('scroll', on, { passive: true })
+    window.addEventListener('resize', on)
+    return () => {
+      cancelAnimationFrame(raf)
+      el.removeEventListener('scroll', on)
+      window.removeEventListener('resize', on)
+    }
+  }, [])
+
+  const by = (dir) => {
+    const el = track.current
+    const card = el?.querySelector('.rcard')
+    if (!el || !card) return
+    el.scrollBy({ left: dir * (card.offsetWidth + 24), behavior: 'smooth' })
+  }
+
   return (
     <section id="camere" className="rooms" aria-labelledby="camere-h">
       <div className="rooms__intro section wrap">
         <MaskText id="camere-h" className="h2" text="Camere calde, cu mic dejun inclus" />
         <div className="rooms__side">
           <Reveal as="p" className="lead" i={1}>
-            Toate cele 14 camere au baie proprie, smart TV, frigider și WiFi gratuit. Alege camera, iar prețul pentru
-            perioada ta îl vezi pe loc, cu reducerile incluse.
+            Toate cele 14 camere au baie proprie, smart TV, frigider și WiFi gratuit. Alege o cameră ca să vezi pozele și
+            prețul pentru câte nopți stai.
           </Reveal>
           <Reveal as="ul" className="rooms__deals" i={2}>
-            <li>
-              <strong>6%</strong> reducere la 3 nopți
-            </li>
-            <li>
-              <strong>9%</strong> la 4 nopți
-            </li>
-            <li>
-              <strong>12%</strong> la 5 nopți
-            </li>
+            {[...DISCOUNTS].reverse().map((d) => (
+              <li key={d.nights}>
+                <strong>{d.pct}%</strong> reducere {d.nights === 5 ? 'de la 5 nopți' : `la ${d.nights} nopți`}
+              </li>
+            ))}
           </Reveal>
         </div>
       </div>
-      <div className="rooms__stack">
+
+      <ul ref={track} className="rooms__track" aria-label="Camerele pensiunii">
         {ROOMS.map((r, i) => (
-          <RoomFrame key={r.id} room={r} index={i} count={ROOMS.length} />
+          <RoomCard key={r.id} room={r} i={i} onOpen={setOpenId} dragged={dragged} />
         ))}
+        <Reveal as="li" className="rcard rcard--info" i={3}>
+          <div className="rinfo">
+            <p className="rinfo__h">Bine de știut</p>
+            <ul className="rinfo__list">
+              <li>
+                <Icon name="coffee" size={18} /> Micul dejun e inclus în prețul fiecărei camere
+              </li>
+              <li>
+                <Icon name="bed" size={18} /> Pat suplimentar la cerere, {EXTRA_BED} lei / noapte, fără mic dejun
+              </li>
+              <li>
+                <Icon name="check" size={18} /> Rezervarea se confirmă cu un avans de 50%
+              </li>
+              <li>
+                <Icon name="paw" size={18} /> Animalele de companie nu au acces în camere
+              </li>
+            </ul>
+            <button type="button" className="btn btn--line rinfo__go" onClick={() => openBooking({ type: 'Cazare' })}>
+              Verifică datele libere
+            </button>
+          </div>
+        </Reveal>
+      </ul>
+
+      <div className="rooms__ctrl wrap">
+        <div className="rooms__bar" aria-hidden="true">
+          <span style={{ transform: `scaleX(${0.25 + prog * 0.75})` }} />
+        </div>
+        <div className="rooms__arrows">
+          <button type="button" className="rarrow" onClick={() => by(-1)} disabled={ends[0]} aria-label="Camera anterioară">
+            <Icon name="left" size={20} />
+          </button>
+          <button type="button" className="rarrow" onClick={() => by(1)} disabled={ends[1]} aria-label="Camera următoare">
+            <Icon name="right" size={20} />
+          </button>
+        </div>
       </div>
-      <Reveal as="p" className="rooms__foot wrap small muted">
-        Pat suplimentar la cerere: {EXTRA_BED} lei / noapte, fără mic dejun. Rezervarea se confirmă cu un avans de 50%.
-        Animalele de companie nu au acces în camere.
-      </Reveal>
+
+      <RoomPanel id={openId} onClose={() => setOpenId(null)} />
     </section>
   )
 }

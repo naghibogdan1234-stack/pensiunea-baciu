@@ -109,11 +109,11 @@ export default function Activities() {
                     {a.note && <p className="act__note">{a.note}</p>}
                     <div className="act__btns">
                       {a.call && (
-                        <a className="btn btn--brass" href={CONTACT.phoneHref} tabIndex={on ? 0 : -1}>
+                        <a className="btn" href={CONTACT.phoneHref} tabIndex={on ? 0 : -1}>
                           <Icon name="phone" size={17} /> Sună: {CONTACT.phone}
                         </a>
                       )}
-                      <button type="button" className="btn btn--line-light" tabIndex={on ? 0 : -1} onClick={() => openBooking({ type: 'Cazare' })}>
+                      <button type="button" className="btn btn--line" tabIndex={on ? 0 : -1} onClick={() => openBooking({ type: 'Cazare' })}>
                         Rezervă o cameră
                       </button>
                     </div>
