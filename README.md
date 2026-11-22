@@ -40,4 +40,7 @@ Când schimbi un text în română, schimbă-l și în engleză.
 - vremea „Acum la Baciu” vine de la Open-Meteo (gratuit, fără cheie, fără cookie-uri)
 
 ## Publicare
-Folderul dist/ se urcă pe orice hosting (Netlify: tragi folderul dist în „Deploy manually”).
+1. În fișierul .env pune adresa site-ului la VITE_SITE_URL (pentru previzualizarea linkului pe WhatsApp).
+   Cât e variantă de prezentare, lasă VITE_ROBOTS=noindex, nofollow; pe domeniul pensiunii pune index, follow.
+2. npm run build
+3. Folderul dist/ se urcă pe orice hosting (Netlify: tragi folderul dist în pagina site-ului, la Deploys).
