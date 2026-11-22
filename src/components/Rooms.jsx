@@ -375,7 +375,7 @@ export default function Rooms() {
         </div>
       </div>
 
-      <ul ref={track} className="rooms__track" aria-label={l.track}>
+      <ul ref={track} className="rooms__track" aria-label={l.track} data-drag>
         {ROOMS.map((r, i) => (
           <RoomCard key={r.id} room={r} i={i} onOpen={setOpenId} dragged={dragged} />
         ))}

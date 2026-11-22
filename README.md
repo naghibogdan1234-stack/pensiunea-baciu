@@ -34,10 +34,33 @@ Când schimbi un text în română, schimbă-l și în engleză.
 - termenul de păstrare a datelor din politica de confidențialitate (6 luni)
 
 ## Ce folosește
-- page-flip (StPageFlip) pentru meniul-carte; motion și lenis pentru animații și scroll lin
+- page-flip (StPageFlip) pentru meniul-carte; lenis pentru scroll lin (restul animațiilor sunt CSS)
 - fonturi găzduite local (@fontsource: EB Garamond, DM Sans), fără cereri către Google Fonts
 - harta Google se încarcă doar după acordul vizitatorului
 - vremea „Acum la Baciu” vine de la Open-Meteo (gratuit, fără cheie, fără cookie-uri)
+
+## Rezervări (pentru backend)
+Fereastra de rezervare (src/components/Booking.jsx) merge în pași: cazare = date → cameră → datele tale → verificare;
+restaurant, echitație, eveniment = detalii → datele tale → verificare. Toată legătura cu serverul e într-un singur
+fișier, src/api/booking.js.
+
+Fără backend (VITE_BOOKING_API gol), cererea se trimite pe e-mail (mailto) la adresa din content.js.
+Cu backend, în .env pui VITE_BOOKING_API=https://api.domeniu.ro și site-ul cheamă:
+
+GET  {API}/availability?from=2026-12-20&to=2026-12-23&guests=3
+     răspuns: { "rooms": { "matrimonial": { "available": true, "left": 2, "price": 280 }, "tripla": { "available": false } } }
+     cheile sunt id-urile camerelor din content.js (ROOMS); "left" arată „Mai sunt doar N”, "price" e opțional
+     și înlocuiește prețul din content.js. Dacă cererea pică, camerele apar toate ca disponibile.
+
+POST {API}/bookings   (JSON)
+     { type, lang, from, to, time, adults, children, room, extraBed,
+       price: { perNight, nights, base, discountPct, discount, extraBed, total, deposit },
+       guest: { name, phone, email, message }, text, subject }
+     răspuns: { "ok": true, "ref": "BAC-2412" }  → clientul vede codul cererii și telefonul pensiunii
+     "type" are valorile din formular: Cazare, Masă la restaurant, Echitație, Eveniment.
+     "text" e rezumatul gata scris (același ca în e-mail), bun pentru notificări.
+
+Fereastra se deschide din orice buton cu openBooking({ type, room, from, to, people }) din src/lib.jsx.
 
 ## Publicare
 1. În fișierul .env pune adresa site-ului la VITE_SITE_URL (pentru previzualizarea linkului pe WhatsApp).

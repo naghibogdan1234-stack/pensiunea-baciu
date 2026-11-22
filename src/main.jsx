@@ -12,6 +12,7 @@ import './styles/base.css'
 import './styles/site.css'
 import './styles/book.css'
 import './styles/more.css'
+import './styles/booking.css'
 import App from './App.jsx'
 
 // primul ecran e deja desenat din index.html; animațiile lui continuă din același punct, fără să o ia de la capăt

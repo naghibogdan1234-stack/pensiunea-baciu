@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Img, openBooking, useParallax } from '../lib.jsx'
 import Icon from './Icon.jsx'
 import DatePicker, { shortDate, nightsBetween } from './DatePicker.jsx'
@@ -52,7 +52,14 @@ const L = {
 const DUR = 7000
 
 export default function Hero() {
-  const { SLIDES } = useData()
+  const { SLIDES: ALL } = useData()
+  // iarna (noiembrie – martie) deschidem cu pădurea înzăpezită, vara cu pensiunea văzută de sus
+  const SLIDES = useMemo(() => {
+    const m = new Date().getMonth()
+    if (!(m >= 10 || m <= 2)) return ALL
+    const w = ALL.find((x) => x.img === 'iarna-padure')
+    return w ? [w, ...ALL.filter((x) => x !== w)] : ALL
+  }, [ALL])
   const l = useT(L)
   const [i, setI] = useState(0)
   const [paused, setPaused] = useState(false)

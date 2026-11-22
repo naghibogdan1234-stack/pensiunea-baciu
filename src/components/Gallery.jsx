@@ -159,7 +159,7 @@ export default function Gallery() {
           </button>
         </div>
       </div>
-      <div className="gallery__row" ref={row} data-lenis-prevent-wheel>
+      <div className="gallery__row" ref={row} data-lenis-prevent-wheel data-drag>
         {MODULES.map((m, idx) => (
           <div key={idx} className={`gm gm--${kind(m, idx)}`}>
             {m.map((i) => (

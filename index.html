@@ -64,7 +64,16 @@
         <div class="hero__media">
           <div class="hero__open">
             <div class="hero__slide on">
-              <img src="/img/vara-drona.webp" srcset="/img/vara-drona-s.webp 800w, /img/vara-drona.webp 1920w" sizes="100vw" width="1920" height="1078" alt="Pensiunea Baciu văzută de sus, vara, cu manejul și pădurea de brazi" fetchpriority="high" decoding="async" />
+              <script>
+                // iarna (noiembrie – martie) prima poză e pădurea înzăpezită; aceeași alegere o face și Hero.jsx
+                ;(function () {
+                  var m = new Date().getMonth(), w = m >= 10 || m <= 2
+                  var n = w ? 'iarna-padure' : 'vara-drona'
+                  var a = w ? 'Pădurea de brazi înzăpezită, cu pista de bob printre copaci' : 'Pensiunea Baciu văzută de sus, vara, cu manejul și pădurea de brazi'
+                  document.write('<img src="./img/' + n + '.webp" srcset="./img/' + n + '-s.webp 800w, ./img/' + n + '.webp 1920w" sizes="100vw" width="1920" height="1080" alt="' + a + '" fetchpriority="high" decoding="async" />')
+                })()
+              </script>
+              <noscript><img src="/img/vara-drona.webp" srcset="/img/vara-drona-s.webp 800w, /img/vara-drona.webp 1920w" sizes="100vw" width="1920" height="1078" alt="Pensiunea Baciu văzută de sus, vara, cu manejul și pădurea de brazi" fetchpriority="high" decoding="async" /></noscript>
             </div>
           </div>
           <div class="hero__scrim"></div>

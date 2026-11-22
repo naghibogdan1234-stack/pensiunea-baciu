@@ -28,13 +28,26 @@ export function RouterProvider({ children }) {
 export const usePage = () => useContext(Ctx).page
 export const href = (page) => (page ? `#/${page}` : '#/')
 
+// cortina dintre pagini: acoperă ecranul (COVER ms), schimbă pagina, apoi se ridică
+export const COVER = 560
+let busy = false
 export function navigate(page) {
   const h = href(page)
-  if (location.hash === h) {
+  if (location.hash === h || (!page && !location.hash.startsWith('#/') && document.querySelector('.hero'))) {
     window.__lenis ? window.__lenis.scrollTo(0, { duration: 1 }) : window.scrollTo({ top: 0, behavior: 'smooth' })
     return
   }
-  location.hash = h
+  if (busy) return
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    location.hash = h
+    return
+  }
+  busy = true
+  window.dispatchEvent(new CustomEvent('baciu:curtain', { detail: { page } }))
+  setTimeout(() => {
+    location.hash = h
+    busy = false
+  }, COVER)
 }
 
 // link către o pagină; dacă pagina e deja deschisă, urcă sus

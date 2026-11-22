@@ -1,8 +1,8 @@
-import { useEffect, lazy, Suspense } from 'react'
+import { useEffect, useRef, useState, lazy, Suspense } from 'react'
 import Lenis from 'lenis'
 import { scrollToId, openBooking, takePendingScroll, Img } from './lib.jsx'
 import { LangProvider, useT, useLang } from './i18n.jsx'
-import { RouterProvider, usePage, Link, ROUTES } from './router.jsx'
+import { RouterProvider, usePage, Link, ROUTES, COVER } from './router.jsx'
 import { useData } from './data/index.js'
 import { ConsentProvider, CookieBanner, CookieSettings, LegalPages } from './components/Legal.jsx'
 import Nav from './components/Nav.jsx'
@@ -77,6 +77,88 @@ function NextPage({ page }) {
         <span className="nextp__l">{line}</span>
       </span>
     </Link>
+  )
+}
+
+// pe calculator, peste caruselele care se trag, cursorul devine un cerc cu „Trage”
+function DragCursor() {
+  const lang = useLang()
+  const ref = useRef(null)
+  useEffect(() => {
+    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return
+    const el = ref.current
+    let x = -100,
+      y = -100,
+      cx = x,
+      cy = y,
+      on = false,
+      raf = 0
+    const loop = () => {
+      cx += (x - cx) * 0.22
+      cy += (y - cy) * 0.22
+      el.style.transform = `translate3d(${cx}px, ${cy}px, 0)`
+      raf = Math.abs(x - cx) + Math.abs(y - cy) > 0.3 ? requestAnimationFrame(loop) : 0
+    }
+    const move = (e) => {
+      x = e.clientX
+      y = e.clientY
+      // pozele mari care se pot apăsa rămân „Trage”; butoanele mici („Vezi camera”) au cursorul obișnuit
+      const c = e.target.closest?.('a, button')
+      const t = e.target.closest?.('[data-drag]') && !(c && c.offsetWidth < 280)
+      if (!!t !== on) {
+        on = !!t
+        el.classList.toggle('is-on', on)
+        document.documentElement.classList.toggle('drag-on', on)
+        if (on) {
+          cx = x
+          cy = y
+        }
+      }
+      if (!raf) raf = requestAnimationFrame(loop)
+    }
+    const down = () => el.classList.add('is-down')
+    const up = () => el.classList.remove('is-down')
+    window.addEventListener('pointermove', move, { passive: true })
+    window.addEventListener('pointerdown', down)
+    window.addEventListener('pointerup', up)
+    return () => {
+      cancelAnimationFrame(raf)
+      window.removeEventListener('pointermove', move)
+      window.removeEventListener('pointerdown', down)
+      window.removeEventListener('pointerup', up)
+    }
+  }, [])
+  return (
+    <div className="dragc" ref={ref} aria-hidden="true">
+      <span>{lang === 'en' ? 'Drag' : 'Trage'}</span>
+    </div>
+  )
+}
+
+// cortina verde cu numele paginii, între pagini
+function Curtain() {
+  const { LINKS } = useData()
+  const [st, setSt] = useState({ phase: '', label: '' })
+  useEffect(() => {
+    const timers = []
+    const on = (e) => {
+      const p = e.detail.page
+      const label = p ? LINKS.find(([id]) => id === p)?.[1] : 'Pensiunea Baciu'
+      timers.forEach(clearTimeout)
+      setSt({ phase: 'in', label })
+      timers.push(setTimeout(() => setSt((s) => ({ ...s, phase: 'out' })), COVER + 260))
+      timers.push(setTimeout(() => setSt({ phase: '', label: '' }), COVER + 260 + 760))
+    }
+    window.addEventListener('baciu:curtain', on)
+    return () => {
+      window.removeEventListener('baciu:curtain', on)
+      timers.forEach(clearTimeout)
+    }
+  }, [LINKS])
+  return (
+    <div className={`curtain ${st.phase ? `is-${st.phase}` : ''}`} aria-hidden="true">
+      <span className="curtain__t">{st.label}</span>
+    </div>
   )
 }
 
@@ -199,6 +281,8 @@ export default function App() {
       <RouterProvider>
         <ConsentProvider>
           <Pages />
+          <Curtain />
+          <DragCursor />
           <Booking />
           <CookieBanner />
           <CookieSettings />
