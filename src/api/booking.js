@@ -11,6 +11,9 @@
 //
 // POST {API}/bookings   (JSON, vezi BookingPayload mai jos)
 //      răspuns: { ok: true, ref: "BAC-2412" }   sau   { ok: false, error: "mesaj pentru vizitator" }
+//
+// Payload-ul îl construiește bookingPayload() din components/booking/rules.js; prețul din el e estimarea
+// arătată vizitatorului, nu un preț garantat: backend-ul trebuie să-l recalculeze, nu să aibă încredere în el.
 
 import { CONTACT } from '../data/content.js'
 
@@ -32,18 +35,24 @@ export const BOOKING_API = (import.meta.env.VITE_BOOKING_API || '').replace(/\/$
  * @property {string} text           cererea scrisă ca text, gata de trimis pe email
  */
 
+// răspunsurile care nu sunt 2xx devin erori (fereastra arată „Nu am putut trimite cererea”)
 async function json(res) {
   if (!res.ok) throw new Error(String(res.status))
   return res.json()
 }
 
+/** Ce camere sunt libere în perioada aleasă. Fără backend: { rooms: {}, demo: true } = toate apar libere. */
 export async function getAvailability({ from, to, guests }) {
   if (!BOOKING_API) return { rooms: {}, demo: true }
   const q = new URLSearchParams({ from, to, guests: String(guests) })
   return json(await fetch(`${BOOKING_API}/availability?${q}`, { headers: { Accept: 'application/json' } }))
 }
 
-/** @param {BookingPayload} payload */
+/**
+ * Trimite cererea. Întoarce { mode: 'api', ok, ref } cu backend,
+ * sau { mode: 'email', ok: true } fără backend (deschide aplicația de email cu cererea scrisă).
+ * @param {BookingPayload} payload
+ */
 export async function createBooking(payload) {
   if (!BOOKING_API) {
     const subject = payload.subject || 'Cerere de rezervare'

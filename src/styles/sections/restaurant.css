@@ -1,0 +1,97 @@
+/* Secțiunea restaurantului.
+   Componenta: components/sections/Restaurant.jsx */
+
+.resto__top {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--gap);
+  align-items: center;
+}
+.resto__text {
+  grid-column: 1 / 6;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+.resto__info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 36px;
+}
+.resto__info dt {
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+.resto__info dd {
+  font-family: var(--f-serif);
+  font-size: 1.6rem;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.resto__btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.resto__big {
+  grid-column: 7 / 13;
+}
+.resto__big .shutter {
+  aspect-ratio: 4 / 5;
+}
+.resto__pair {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--gap);
+  margin-top: clamp(70px, 9vw, 140px);
+  align-items: end;
+}
+.resto__hall {
+  grid-column: 1 / 8;
+}
+.resto__hall .shutter {
+  aspect-ratio: 16 / 10;
+}
+.resto__events {
+  grid-column: 9 / 13;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.resto__events .shutter {
+  aspect-ratio: 4 / 5;
+  width: 74%;
+  margin-bottom: 10px;
+}
+
+@media (max-width: 1180px) {
+  .resto__text {
+    grid-column: 1 / 7;
+  }
+  .resto__big {
+    grid-column: 8 / 13;
+  }
+}
+
+@media (max-width: 900px) {
+  .resto__top,
+  .resto__pair {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 40px;
+  }
+  .resto__big .shutter {
+    aspect-ratio: 4 / 3;
+  }
+  .resto__events .shutter {
+    width: 64%;
+  }
+}
+
+@media (max-width: 760px) {
+  .resto__events .shutter {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+  }
+}

@@ -1,0 +1,134 @@
+/* Vremea de acum: varianta mică (pe poza de sus) și cea mare (la „Despre”).
+   Componenta: components/ui/Weather.jsx */
+
+.wchip {
+  position: absolute;
+  top: 112px;
+  right: var(--m);
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  text-align: right;
+  animation: fadeUp 900ms var(--ease-out) 760ms both;
+}
+.wchip__l {
+  font-size: 0.8125rem;
+  opacity: 0.85;
+}
+.wchip__v {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.05rem;
+  font-weight: 500;
+}
+.wchip__v .sky {
+  width: 24px;
+  height: 24px;
+}
+.wchip__dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.6;
+}
+.wchip__d {
+  font-weight: 400;
+}
+.wchip.is-in .wchip__v > :nth-child(n + 2) {
+  animation: wIn 700ms var(--ease-out) both;
+}
+.sky__sun {
+  transform-origin: 16px 16px;
+  animation: spin 40s linear infinite;
+}
+.sky__drops {
+  animation: drop 1.6s ease-in-out infinite;
+}
+.wpanel {
+  padding-top: 22px;
+  box-shadow: inset 0 1px 0 rgba(243, 240, 234, 0.14); /* taste-skill-ignore */
+  display: grid;
+  gap: 10px;
+}
+.wpanel__l {
+  font-size: 0.95rem;
+  color: var(--on-forest-muted);
+}
+.wpanel__l .num {
+  color: var(--brass);
+  font-weight: 500;
+}
+.wpanel__main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.wpanel__main .sky {
+  width: 34px;
+  height: 34px;
+  color: var(--brass);
+}
+.wpanel__t {
+  font-family: var(--f-serif);
+  font-size: 2.6rem;
+  line-height: 1;
+}
+.wpanel__d {
+  font-size: 1rem;
+}
+.wpanel__more {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  font-size: 0.9rem;
+  color: var(--on-forest-muted);
+}
+.wpanel__more .num {
+  color: var(--on-forest);
+}
+
+@media (max-width: 760px) {
+  .wchip {
+    top: 84px;
+    right: auto;
+    left: var(--m);
+    align-items: flex-start;
+    text-align: left;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sky__sun,
+  .sky__drops {
+    animation: none;
+  }
+}
+
+@keyframes wIn {
+  from {
+    opacity: 0;
+    transform: translateX(8px);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes drop {
+  0%,
+  100% {
+    transform: translateY(-1px);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translateY(1.5px);
+    opacity: 1;
+  }
+}

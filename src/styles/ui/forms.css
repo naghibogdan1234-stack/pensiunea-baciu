@@ -1,0 +1,171 @@
+/* Câmpuri de formular, bife, butoane-opțiune, rândurile de preț.
+   Folosite în: components/booking/ și în setările de cookie-uri */
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.form__types {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 42px;
+  padding: 0.45em 1.15em;
+  border-radius: 999px;
+  background: var(--paper-2);
+  color: var(--ink);
+  font-size: 0.95rem;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 200ms ease, color 200ms ease, transform 140ms var(--ease-out);
+}
+.chip:active {
+  transform: scale(0.97);
+}
+.chip input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.chip:has(input:focus-visible) {
+  outline: 2px solid var(--brass);
+  outline-offset: 3px;
+}
+.chip.on {
+  background: var(--ink);
+  color: var(--paper);
+}
+.form__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px 18px;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.field > span {
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+.field--wide {
+  grid-column: 1 / -1;
+}
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 14px;
+  font-size: 1rem;
+  background: #fff;
+  border: 1.5px solid color-mix(in srgb, var(--ink) 16%, transparent);
+  border-radius: var(--r);
+  outline: none;
+  transition: border-color 180ms ease;
+}
+.field textarea {
+  resize: vertical;
+  min-height: 90px;
+}
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: var(--accent);
+}
+.check,
+.agree {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  position: relative;
+}
+.check input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.check {
+  grid-column: 1 / -1;
+}
+.agree {
+  align-items: flex-start;
+  font-size: 0.95rem;
+}
+.agree input {
+  width: 20px;
+  height: 20px;
+  margin: 2px 0 0;
+  flex: none;
+  accent-color: var(--accent);
+}
+.est {
+  background: var(--paper-2);
+  border-radius: var(--r);
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.est__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--muted);
+  font-size: 0.98rem;
+}
+.est__row--off {
+  color: var(--accent);
+}
+.est__total {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-top: 4px;
+}
+.est__total strong {
+  font-family: var(--f-serif);
+  font-weight: 500;
+  font-size: 2.2rem;
+  line-height: 1;
+}
+.est__note {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+.sent {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  align-items: flex-start;
+}
+.sent__msg {
+  width: 100%;
+  white-space: pre-wrap;
+  font-family: var(--f-sans);
+  font-size: 0.95rem;
+  background: var(--paper-2);
+  padding: 18px;
+  border-radius: var(--r);
+}
+.sel {
+  user-select: all;
+}
+
+@media (max-width: 760px) {
+  .form__grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}

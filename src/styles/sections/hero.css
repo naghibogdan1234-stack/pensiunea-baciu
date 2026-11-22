@@ -1,0 +1,394 @@
+/* Primul ecran: pozele care se schimbă, titlul, bara de rezervare rapidă.
+   Componenta: components/sections/Hero.jsx (și primul ecran din index.html) */
+
+.hero {
+  position: relative;
+  height: 100svh;
+  min-height: 640px;
+  overflow: hidden;
+  background: var(--forest);
+  color: #fff;
+}
+.hero__media {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+.hero__open {
+  position: absolute;
+  inset: 0;
+  animation: heroOpen 1600ms var(--ease-in-out) both;
+  animation-delay: calc(0ms - var(--since, 0ms));
+}
+.hero__slide {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 1600ms ease;
+}
+.hero__slide.on {
+  opacity: 1;
+}
+.hero__slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.12);
+}
+.hero__slide.on img {
+  animation: kenburns 9000ms var(--ease-soft) both;
+}
+.hero__slide:first-child.on img {
+  animation-delay: calc(0ms - var(--since, 0ms));
+}
+.hero__scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(10, 16, 12, 0.78) 0%, rgba(10, 16, 12, 0.35) 38%, rgba(10, 16, 12, 0) 62%), linear-gradient(to bottom, rgba(10, 16, 12, 0.5) 0%, rgba(10, 16, 12, 0) 22%); /* taste-skill-ignore */
+}
+.hero__body {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: 1fr auto;
+  column-gap: 32px;
+  row-gap: 28px;
+  padding-bottom: 32px;
+}
+.hero__text {
+  grid-column: 1 / -1;
+  align-self: end;
+}
+.hero__title {
+  font-family: var(--f-serif);
+  font-weight: 400;
+  font-size: clamp(4rem, 1rem + 9.6vw, 10.5rem);
+  line-height: 0.88;
+  letter-spacing: -0.02em;
+}
+.hero__line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.06em;
+}
+.hero__line > span {
+  display: inline-block;
+  animation: lineUp 1100ms var(--ease-out) both;
+}
+.hero__line:nth-child(1) > span {
+  animation-delay: calc(120ms - var(--since, 0ms));
+}
+.hero__line:nth-child(2) > span {
+  animation-delay: calc(240ms - var(--since, 0ms));
+}
+.hero__sub {
+  margin-top: 22px;
+  font-size: clamp(1.1rem, 1rem + 0.4vw, 1.35rem);
+  max-width: 38ch;
+  line-height: 1.45;
+  animation: fadeUp 900ms var(--ease-out) calc(420ms - var(--since, 0ms)) both;
+}
+.bookbar {
+  position: relative;
+  grid-column: 1;
+  justify-self: start;
+  display: flex;
+  align-items: stretch;
+  gap: 2px;
+  padding: 6px;
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: 999px;
+  animation: fadeUp 900ms var(--ease-out) 560ms both;
+}
+.bookbar__f {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  min-width: 150px;
+  padding: 6px 24px;
+  border-radius: 999px;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 180ms ease;
+}
+.bookbar__f--s {
+  min-width: 110px;
+}
+.bookbar__f.is-focus,
+.bookbar__f:focus-within {
+  background: var(--paper-2);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .bookbar__f:hover {
+    background: var(--paper-2);
+  }
+}
+.bookbar__l {
+  font-size: 0.8125rem;
+  color: var(--muted);
+  line-height: 1.25;
+}
+.bookbar__v {
+  font-size: 1.02rem;
+  font-weight: 500;
+  line-height: 1.35;
+  white-space: nowrap;
+}
+.bookbar__v.is-empty {
+  color: var(--muted);
+  font-weight: 400;
+}
+.bookbar__f select {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  font-size: 1.02rem;
+  font-weight: 500;
+  outline: none;
+  cursor: pointer;
+}
+.bookbar__go {
+  min-height: 56px;
+  padding-inline: 1.6em;
+}
+.bookpop {
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 12px);
+  z-index: 10;
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: 14px;
+  padding: 24px 24px 18px;
+  box-shadow: 0 30px 70px -20px rgba(0, 0, 0, 0.55); /* taste-skill-ignore */
+  opacity: 0;
+  transform: translateY(10px) scale(0.98);
+  transform-origin: bottom left;
+  pointer-events: none;
+  transition: opacity 220ms ease, transform 260ms var(--ease-out);
+}
+.bookpop.is-open {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+.bookpop__foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  margin-top: 14px;
+  padding-top: 14px;
+  box-shadow: inset 0 1px 0 rgba(28, 36, 32, 0.08); /* taste-skill-ignore */
+}
+.bookpop__sum {
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+.bookpop__sum strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+.bookpop__btns {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.bookpop__btns .btn {
+  min-height: 44px;
+  padding-inline: 1.6em;
+}
+.bookpop__btns .btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* data în formularul de rezervare */
+.dates__box {
+  width: 100%;
+  display: flex;
+  align-items: stretch;
+  gap: 2px;
+  background: #fff;
+  border-radius: var(--r);
+  box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--ink) 16%, transparent); /* taste-skill-ignore */
+  text-align: left;
+  transition: box-shadow 180ms ease;
+}
+.dates__box.is-open {
+  box-shadow: inset 0 0 0 1.5px var(--accent); /* taste-skill-ignore */
+}
+.dates__cell {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 10px 14px;
+}
+.dates__cell + .dates__cell {
+  box-shadow: inset 1.5px 0 0 color-mix(in srgb, var(--ink) 10%, transparent); /* taste-skill-ignore */
+}
+.dates__l {
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+.dates__v {
+  font-weight: 500;
+}
+.dates__ico {
+  display: grid;
+  place-items: center;
+  padding: 0 14px;
+  color: var(--accent);
+}
+.dates__cal {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 420ms var(--ease-in-out);
+}
+.dates__cal.is-open {
+  grid-template-rows: 1fr;
+}
+.dates__inner {
+  overflow: hidden;
+  min-height: 0;
+}
+.dates__cal.is-open .dates__inner {
+  padding-top: 18px;
+}
+.hero__dots {
+  grid-column: 2;
+  align-self: end;
+  justify-self: end;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  animation: fadeUp 900ms var(--ease-out) 680ms both;
+}
+.hero__cap {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+.hero__bars {
+  display: flex;
+  gap: 8px;
+}
+.hero__bar {
+  width: 46px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+}
+.hero__bar span {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.32);
+  overflow: hidden;
+}
+.hero__bar span::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  transform: scaleX(0);
+  transform-origin: left;
+}
+.hero__bar.done span::after {
+  transform: scaleX(1);
+}
+.hero__bar.on span::after {
+  animation: barFill linear both;
+  animation-duration: inherit;
+  animation-play-state: inherit;
+}
+
+@media (max-width: 900px) {
+  .bookbar {
+    display: none;
+  }
+  .hero__body {
+    grid-template-columns: 1fr;
+    padding-bottom: calc(96px + env(safe-area-inset-bottom));
+  }
+  .hero__dots {
+    grid-column: 1;
+    justify-self: start;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 760px) {
+  .hero__title {
+    font-size: clamp(3.4rem, 17vw, 5.5rem);
+  }
+  .hero__cap {
+    display: none;
+  }
+}
+
+/* primul ecran din index.html: ține locul barei de rezervare, ca titlul să nu sară când pornește site-ul */
+.hero__spacer {
+  grid-column: 1;
+  height: 68px;
+}
+
+@media (max-width: 900px) {
+  .hero__spacer {
+    height: 22px;
+  }
+}
+
+@media (min-width: 761px) and (max-width: 900px) {
+  .hero__spacer {
+    height: 55px;
+  }
+}
+
+@keyframes heroOpen {
+  from {
+    clip-path: inset(100% 0 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes kenburns {
+  from {
+    transform: scale(1.12);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+@keyframes lineUp {
+  from {
+    transform: translateY(105%);
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes barFill {
+  to {
+    transform: scaleX(1);
+  }
+}

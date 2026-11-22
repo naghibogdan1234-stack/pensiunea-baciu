@@ -1,0 +1,37 @@
+/* Butoanele − / + pentru numere (nopți, persoane).
+   Folosite în: components/sections/RoomPanel.jsx și components/booking/steps.jsx (clasa .step) */
+
+.step {
+  display: flex;
+  align-items: center;
+  background: var(--paper);
+  border-radius: 999px;
+  padding: 4px;
+}
+.step button {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  font-size: 1.25rem;
+  color: var(--ink);
+  transition: background-color 160ms ease, transform 140ms var(--ease-out);
+}
+.step button:active {
+  transform: scale(0.92);
+}
+.step button:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .step button:not(:disabled):hover {
+    background: var(--paper-2);
+  }
+}
+.step output {
+  min-width: 34px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 1.1rem;
+}

@@ -1,0 +1,56 @@
+/* Panoul care intră din lateral, cu fundal întunecat.
+   Folosit de: components/sections/RoomPanel.jsx */
+
+.drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  visibility: hidden;
+  transition: visibility 0s linear 560ms;
+}
+.drawer.is-open {
+  visibility: visible;
+  transition: visibility 0s;
+}
+.drawer__back {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 16, 12, 0.5);
+  opacity: 0;
+  transition: opacity 400ms ease;
+}
+.drawer.is-open .drawer__back {
+  opacity: 1;
+}
+.drawer__panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(580px, 100vw);
+  background: var(--paper);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 0 clamp(20px, 3vw, 40px) calc(32px + env(safe-area-inset-bottom));
+  transform: translateX(100%);
+  transition: transform 560ms var(--ease-drawer);
+}
+.drawer.is-open .drawer__panel {
+  transform: none;
+}
+.drawer__bar {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 22px 0 16px;
+  background: var(--paper);
+}
+.drawer__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}

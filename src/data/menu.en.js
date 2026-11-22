@@ -1,7 +1,7 @@
-// English menu. Prices, weights and order come from menu.js; only names and descriptions are translated.
+// Meniul în engleză. Prețurile, gramajele și ordinea vin din menu.js; aici stau doar denumirile și ingredientele.
 import { MENU as RO_MENU, PAGES as RO_PAGES } from './menu.js'
 
-// [name, description?] in the same order as menu.js
+// pentru fiecare capitol: [titlu, [[denumire, ingrediente?], ...]], în aceeași ordine ca în menu.js
 const T = {
   micDejun: ['Breakfast', [
     ['Plain omelette', 'Eggs'],
@@ -171,6 +171,7 @@ const T = {
   ]],
 }
 
+// gramajele care au cuvinte de tradus
 const G = { '1 bucată': '1 piece', '2 ouă': '2 eggs', plic: 'sachet' }
 
 export const MENU = Object.fromEntries(
@@ -182,14 +183,15 @@ export const MENU = Object.fromEntries(
         ...sec,
         title,
         items: sec.items.map((it, i) => {
-          const [n, d] = rows[i] || [it.n, it.d]
-          return { ...it, n, d: it.d ? d || it.d : undefined, g: it.g ? G[it.g] || it.g : it.g }
+          const [name, desc] = rows[i] || [it.name, it.desc]
+          return { ...it, name, desc: it.desc ? desc || it.desc : undefined, weight: it.weight ? G[it.weight] || it.weight : it.weight }
         }),
       },
     ]
   }),
 )
 
+// titlurile de capitol din cuprins
 const CH = {
   'Mic dejun': 'Breakfast',
   Ciorbe: 'Sour soups',

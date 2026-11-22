@@ -55,11 +55,16 @@
         ]
       }
     </script>
+    <!-- clasa .js: animațiile de apariție se pregătesc doar dacă rulează JavaScript (altfel conținutul se vede direct) -->
     <script>document.documentElement.classList.add('js')</script>
   </head>
   <body>
     <div id="root">
-      <!-- primul ecran, desenat imediat, până se încarcă restul site-ului; React îl înlocuiește cu aceeași imagine -->
+      <!--
+        Primul ecran, desenat imediat, cât se încarcă JavaScript-ul. React îl înlocuiește apoi cu Hero.jsx,
+        care arată la fel, așa că vizitatorul nu vede nicio săritură. Dacă schimbi Hero.jsx (titlul, textul,
+        prima poză, regula de iarnă), schimbă și aici.
+      -->
       <section class="hero" aria-label="Pensiunea Baciu">
         <div class="hero__media">
           <div class="hero__open">
@@ -88,6 +93,7 @@
       </section>
     </div>
     <script>
+      // momentul în care a apărut primul ecran (îl citește src/main.jsx); textul în engleză, dacă așa a ales vizitatorul
       window.__t0 = performance.now()
       try {
         if (localStorage.getItem('baciu-lang') === 'en') {

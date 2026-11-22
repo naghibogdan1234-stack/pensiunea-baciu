@@ -1,227 +1,46 @@
-import { useEffect, useRef, useState, lazy, Suspense } from 'react'
+// Scheletul site-ului: ce se pornește o singură dată și ce stă mereu pe ecran.
+//
+//   App            pornește scroll-ul lin (Lenis) și pune „furnizorii” (limba, pagina, cookie-urile)
+//   └─ Pages       bara de sus + pagina curentă + subsolul + bara de jos de pe telefon
+//   └─ ferestrele globale, montate o singură dată și deschise prin evenimente (vezi events.js):
+//      Curtain, DragCursor, Booking, CookieBanner, CookieSettings, LegalPages
+//
+// Ce secțiuni are fiecare pagină se hotărăște în pages.jsx.
+import { useEffect } from 'react'
 import Lenis from 'lenis'
-import { scrollToId, openBooking, takePendingScroll, Img } from './lib.jsx'
-import { LangProvider, useT, useLang } from './i18n.jsx'
-import { RouterProvider, usePage, Link, ROUTES, COVER } from './router.jsx'
+import { scrollToId, takePendingScroll } from './lib/scroll.js'
+import { LangProvider, useTexts, useLang } from './i18n.jsx'
+import { RouterProvider, usePage } from './router.jsx'
 import { useData } from './data/index.js'
-import { ConsentProvider, CookieBanner, CookieSettings, LegalPages } from './components/Legal.jsx'
-import Nav from './components/Nav.jsx'
-import Hero from './components/Hero.jsx'
-import About from './components/About.jsx'
-import Rooms from './components/Rooms.jsx'
-import Offers from './components/Offers.jsx'
-import Restaurant from './components/Restaurant.jsx'
-import Activities from './components/Activities.jsx'
-import Reviews from './components/Reviews.jsx'
-import Gallery from './components/Gallery.jsx'
-import Faq from './components/Faq.jsx'
-import Visit from './components/Visit.jsx'
-import Footer from './components/Footer.jsx'
-import Booking from './components/Booking.jsx'
-import PageHead from './components/PageHead.jsx'
-import Icon from './components/Icon.jsx'
-import { CONTACT } from './data/content.js'
+import { Home, PAGE_SECTIONS } from './pages.jsx'
+import { ConsentProvider, CookieBanner, CookieSettings } from './components/legal/Consent.jsx'
+import LegalPages from './components/legal/LegalPages.jsx'
+import Nav from './components/layout/Nav.jsx'
+import Footer from './components/layout/Footer.jsx'
+import MobileBar from './components/layout/MobileBar.jsx'
+import PageHead from './components/layout/PageHead.jsx'
+import NextPage from './components/layout/NextPage.jsx'
+import Curtain from './components/layout/Curtain.jsx'
+import DragCursor from './components/layout/DragCursor.jsx'
+import Booking from './components/booking/Booking.jsx'
 
-// cartea-meniu (cu biblioteca de răsfoit) se încarcă separat, ca prima pagină să apară mai repede
-const loadBook = () => import('./components/MenuBook.jsx')
-const LazyBook = lazy(loadBook)
-function MenuBook() {
-  useEffect(() => {
-    const t = setTimeout(loadBook, 1500)
-    return () => clearTimeout(t)
-  }, [])
-  return (
-    <Suspense fallback={<section id="meniu" className="menu menu--wait" aria-hidden="true" />}>
-      <LazyBook />
-    </Suspense>
-  )
+const TEXT = {
+  ro: { skip: 'Sari la conținut' },
+  en: { skip: 'Skip to content' },
 }
-
-const L = {
-  ro: { call: 'Sună', book: 'Rezervă', skip: 'Sari la conținut', next: 'Mai departe', quick: 'Acțiuni rapide' },
-  en: { call: 'Call', book: 'Book', skip: 'Skip to content', next: 'Next', quick: 'Quick actions' },
-}
-const TITLE = { ro: 'Pensiunea Baciu, Toplița · cazare, restaurant, echitație și schi', en: 'Pensiunea Baciu, Toplița · rooms, restaurant, riding and skiing' }
-
-function MobileBar() {
-  const l = useT(L)
-  return (
-    <div className="mbar" role="navigation" aria-label={l.quick}>
-      <a className="btn btn--line" href={CONTACT.phoneHref}>
-        <Icon name="phone" size={18} /> {l.call}
-      </a>
-      <button type="button" className="btn" onClick={() => openBooking()}>
-        {l.book}
-      </button>
-    </div>
-  )
-}
-
-// la capătul fiecărei pagini separate: următoarea pagină, cu poza ei
-function NextPage({ page }) {
-  const { LINKS, PAGE_HEAD } = useData()
-  const l = useT(L)
-  const i = ROUTES.indexOf(page)
-  const [id, label, , line] = LINKS[(i + 1) % LINKS.length]
-  const img = PAGE_HEAD[id].img // poza mare a paginii următoare
-  return (
-    <Link to={id} className="nextp">
-      <span className="nextp__pic" aria-hidden="true">
-        <Img name={img} alt="" sizes="100vw" />
-      </span>
-      <span className="nextp__txt wrap">
-        <span className="nextp__k">{l.next}</span>
-        <span className="nextp__t">
-          {label} <Icon name="arrow" size={28} />
-        </span>
-        <span className="nextp__l">{line}</span>
-      </span>
-    </Link>
-  )
-}
-
-// pe calculator, peste caruselele care se trag, cursorul devine un cerc cu „Trage”
-function DragCursor() {
-  const lang = useLang()
-  const ref = useRef(null)
-  useEffect(() => {
-    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return
-    const el = ref.current
-    let x = -100,
-      y = -100,
-      cx = x,
-      cy = y,
-      on = false,
-      raf = 0
-    const loop = () => {
-      cx += (x - cx) * 0.22
-      cy += (y - cy) * 0.22
-      el.style.transform = `translate3d(${cx}px, ${cy}px, 0)`
-      raf = Math.abs(x - cx) + Math.abs(y - cy) > 0.3 ? requestAnimationFrame(loop) : 0
-    }
-    const move = (e) => {
-      x = e.clientX
-      y = e.clientY
-      // pozele mari care se pot apăsa rămân „Trage”; butoanele mici („Vezi camera”) au cursorul obișnuit
-      const c = e.target.closest?.('a, button')
-      const t = e.target.closest?.('[data-drag]') && !(c && c.offsetWidth < 280)
-      if (!!t !== on) {
-        on = !!t
-        el.classList.toggle('is-on', on)
-        document.documentElement.classList.toggle('drag-on', on)
-        if (on) {
-          cx = x
-          cy = y
-        }
-      }
-      if (!raf) raf = requestAnimationFrame(loop)
-    }
-    const down = () => el.classList.add('is-down')
-    const up = () => el.classList.remove('is-down')
-    window.addEventListener('pointermove', move, { passive: true })
-    window.addEventListener('pointerdown', down)
-    window.addEventListener('pointerup', up)
-    return () => {
-      cancelAnimationFrame(raf)
-      window.removeEventListener('pointermove', move)
-      window.removeEventListener('pointerdown', down)
-      window.removeEventListener('pointerup', up)
-    }
-  }, [])
-  return (
-    <div className="dragc" ref={ref} aria-hidden="true">
-      <span>{lang === 'en' ? 'Drag' : 'Trage'}</span>
-    </div>
-  )
-}
-
-// cortina verde cu numele paginii, între pagini
-function Curtain() {
-  const { LINKS } = useData()
-  const [st, setSt] = useState({ phase: '', label: '' })
-  useEffect(() => {
-    const timers = []
-    const on = (e) => {
-      const p = e.detail.page
-      const label = p ? LINKS.find(([id]) => id === p)?.[1] : 'Pensiunea Baciu'
-      timers.forEach(clearTimeout)
-      setSt({ phase: 'in', label })
-      timers.push(setTimeout(() => setSt((s) => ({ ...s, phase: 'out' })), COVER + 260))
-      timers.push(setTimeout(() => setSt({ phase: '', label: '' }), COVER + 260 + 760))
-    }
-    window.addEventListener('baciu:curtain', on)
-    return () => {
-      window.removeEventListener('baciu:curtain', on)
-      timers.forEach(clearTimeout)
-    }
-  }, [LINKS])
-  return (
-    <div className={`curtain ${st.phase ? `is-${st.phase}` : ''}`} aria-hidden="true">
-      <span className="curtain__t">{st.label}</span>
-    </div>
-  )
-}
-
-function Home() {
-  return (
-    <>
-      <Hero />
-      <About />
-      <Rooms />
-      <Offers />
-      <Restaurant />
-      <MenuBook />
-      <Activities />
-      <Reviews />
-      <Gallery />
-      <Faq limit={5} />
-      <Visit />
-    </>
-  )
-}
-
-const SUB = {
-  camere: () => (
-    <>
-      <Rooms />
-      <Offers />
-      <Faq only="camere" />
-    </>
-  ),
-  restaurant: () => (
-    <>
-      <Restaurant />
-      <MenuBook />
-      <Faq only="restaurant" />
-    </>
-  ),
-  activitati: () => (
-    <>
-      <Activities />
-      <Faq only="activitati" />
-    </>
-  ),
-  galerie: () => (
-    <>
-      <Gallery />
-      <Reviews />
-    </>
-  ),
-  contact: () => (
-    <>
-      <Visit />
-      <Faq />
-    </>
-  ),
+// titlul ferestrei pe prima pagină; paginile separate îl iau din PAGE_HEAD (data/content.js)
+const HOME_TITLE = {
+  ro: 'Pensiunea Baciu, Toplița · cazare, restaurant, echitație și schi',
+  en: 'Pensiunea Baciu, Toplița · rooms, restaurant, riding and skiing',
 }
 
 function Pages() {
   const page = usePage()
   const lang = useLang()
   const { PAGE_HEAD } = useData()
-  const l = useT(L)
+  const txt = useTexts(TEXT)
 
-  // la fiecare pagină nouă: sus de tot, titlul ferestrei, apoi secțiunea cerută (dacă e cazul)
+  // la fiecare pagină nouă: sus de tot, apoi, dacă s-a cerut, coborâm la o secțiune (vezi lib/scroll.js)
   useEffect(() => {
     window.__lenis?.scrollTo(0, { immediate: true, force: true })
     window.scrollTo(0, 0)
@@ -229,21 +48,22 @@ function Pages() {
     if (id) setTimeout(() => scrollToId(id), 450)
   }, [page])
   useEffect(() => {
-    document.title = page ? `${PAGE_HEAD[page].title} · Pensiunea Baciu` : TITLE[lang]
+    document.title = page ? `${PAGE_HEAD[page].title} · Pensiunea Baciu` : HOME_TITLE[lang]
   }, [page, lang, PAGE_HEAD])
 
-  const Sub = SUB[page]
+  const Sections = PAGE_SECTIONS[page]
   return (
     <>
       <a className="skip" href="#continut">
-        {l.skip}
+        {txt.skip}
       </a>
       <Nav />
+      {/* key={page}: la schimbarea paginii, conținutul se montează din nou (animațiile pornesc iar) */}
       <main id="continut" className="page" key={page}>
-        {Sub ? (
+        {Sections ? (
           <>
             <PageHead page={page} />
-            <Sub />
+            <Sections />
             <NextPage page={page} />
           </>
         ) : (
@@ -257,18 +77,19 @@ function Pages() {
 }
 
 export default function App() {
+  // scroll lin cu Lenis; e pus în window.__lenis ca restul codului să poată derula pagina prin el
   useEffect(() => {
     const lenis = new Lenis({ duration: 1.1, smoothWheel: true })
     window.__lenis = lenis
     let raf
-    const loop = (t) => {
-      lenis.raf(t)
+    const loop = (time) => {
+      lenis.raf(time)
       raf = requestAnimationFrame(loop)
     }
     raf = requestAnimationFrame(loop)
-    // adrese vechi de forma #camere duc la secțiunea respectivă
-    const h = location.hash.slice(1)
-    if (h && !h.startsWith('/') && document.getElementById(h)) setTimeout(() => scrollToId(h), 400)
+    // adresele vechi de forma #camere (fără /) duc la secțiunea respectivă
+    const hash = location.hash.slice(1)
+    if (hash && !hash.startsWith('/') && document.getElementById(hash)) setTimeout(() => scrollToId(hash), 400)
     return () => {
       cancelAnimationFrame(raf)
       lenis.destroy()

@@ -1,0 +1,435 @@
+/* Caruselul cu camere și panoul lateral cu detaliile camerei.
+   Componentele: components/sections/Rooms.jsx și RoomPanel.jsx */
+
+.rooms__intro {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--gap);
+  align-items: end;
+  padding-bottom: clamp(3rem, 6vw, 5rem);
+}
+.rooms__intro .h2 {
+  grid-column: 1 / 7;
+}
+.rooms__side {
+  grid-column: 8 / 13;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.rooms__deals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 22px;
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+.rooms__deals strong {
+  font-family: var(--f-serif);
+  font-size: 1.6rem;
+  font-weight: 500;
+  color: var(--accent);
+  margin-right: 4px;
+}
+.rooms {
+  padding-bottom: var(--section);
+}
+.rooms__track {
+  display: flex;
+  gap: 24px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--m);
+  padding-inline: var(--m);
+  padding-bottom: 6px;
+  scrollbar-width: none;
+  cursor: grab;
+  user-select: none;
+}
+.rooms__track::-webkit-scrollbar {
+  display: none;
+}
+.rooms__track.is-drag,
+.rooms__track.is-coast {
+  scroll-snap-type: none;
+  cursor: grabbing;
+}
+.rooms__track.is-drag .rcard__btn {
+  pointer-events: none;
+}
+.rcard {
+  flex: none;
+  width: min(40vw, 600px);
+  scroll-snap-align: start;
+}
+.rcard__btn {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  width: 100%;
+  text-align: left;
+  color: inherit;
+  cursor: inherit;
+}
+.rcard__pic {
+  position: relative;
+  display: block;
+  aspect-ratio: 4 / 5;
+  max-height: 72svh;
+  width: 100%;
+  overflow: hidden;
+  border-radius: var(--r);
+  background: var(--paper-2);
+}
+.rcard__pic img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.12);
+  will-change: transform;
+}
+.rcard__more {
+  position: absolute;
+  left: 20px;
+  bottom: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 0.95rem;
+  font-weight: 500;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 260ms ease, transform 320ms var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .rcard__btn:hover .rcard__more,
+  .rcard__btn:focus-visible .rcard__more {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (hover: none) {
+  .rcard__more {
+    opacity: 1;
+    transform: none;
+  }
+}
+.rcard__btn:active .rcard__pic {
+  transform: scale(0.99);
+}
+.rcard__pic {
+  transition: transform 200ms var(--ease-out);
+}
+.rcard__txt {
+  display: grid;
+  gap: 6px;
+}
+.rcard__name {
+  font-family: var(--f-serif);
+  font-weight: 500;
+  font-size: clamp(1.6rem, 1.3rem + 0.9vw, 2.2rem);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+.rcard__meta {
+  color: var(--muted);
+}
+.rcard__price {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 0.98rem;
+}
+.rcard__price strong {
+  font-family: var(--f-serif);
+  font-weight: 500;
+  font-size: 1.6rem;
+  color: var(--ink);
+}
+.rcard--info {
+  width: min(30vw, 440px);
+  cursor: auto;
+  user-select: text;
+}
+.rinfo {
+  aspect-ratio: 4 / 5;
+  max-height: 72svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 28px;
+  padding: clamp(26px, 2.6vw, 40px);
+  border-radius: var(--r);
+  background: var(--forest);
+  color: var(--on-forest);
+}
+.rinfo__h {
+  font-family: var(--f-serif);
+  font-size: clamp(1.7rem, 1.3rem + 1vw, 2.4rem);
+  line-height: 1.1;
+}
+.rinfo__list {
+  display: grid;
+  gap: 18px;
+  font-size: 1rem;
+  line-height: 1.45;
+}
+.rinfo__list li {
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  gap: 14px;
+}
+.rinfo__list .ico {
+  color: var(--brass);
+  margin-top: 2px;
+}
+.rinfo__go {
+  align-self: flex-start;
+  color: var(--on-forest);
+  box-shadow: inset 0 0 0 1.5px rgba(243, 240, 234, 0.4); /* taste-skill-ignore */
+}
+.rooms__ctrl {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  margin-top: 36px;
+}
+.rooms__bar {
+  flex: 1;
+  height: 2px;
+  background: color-mix(in srgb, var(--ink) 12%, transparent);
+  overflow: hidden;
+}
+.rooms__bar span {
+  display: block;
+  height: 100%;
+  background: var(--ink);
+  transform-origin: left;
+  transition: transform 120ms linear;
+}
+.rooms__arrows {
+  display: flex;
+  gap: 10px;
+}
+.rarrow {
+  width: 52px;
+  height: 52px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--ink) 22%, transparent); /* taste-skill-ignore */
+  transition: background-color 180ms ease, color 180ms ease, opacity 180ms ease, transform 140ms var(--ease-out);
+}
+.rarrow:active {
+  transform: scale(0.94);
+}
+.rarrow:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .rarrow:not(:disabled):hover {
+    background: var(--ink);
+    color: var(--paper);
+  }
+}
+
+/* panoul camerei */
+.rpanel__panel {
+  padding: 0;
+}
+.rpanel__pics {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  background: var(--paper-2);
+  overflow: hidden;
+}
+.rpanel__pics img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transform: scale(1.04);
+  transition: opacity 500ms ease, transform 900ms var(--ease-out);
+}
+.rpanel__pics img.is-on {
+  opacity: 1;
+  transform: none;
+}
+.rpanel__x {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  z-index: 2;
+  background: var(--paper);
+}
+.rpanel__dots {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 14px;
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  z-index: 2;
+}
+.rpanel__dots button {
+  width: 36px;
+  height: 28px;
+  position: relative;
+}
+.rpanel__dots button::before {
+  content: '';
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  top: 50%;
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.55);
+  transition: background-color 200ms ease;
+}
+.rpanel__dots button.is-on::before {
+  background: #fff;
+}
+.rpanel__body {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 30px clamp(20px, 3vw, 40px) calc(32px + env(safe-area-inset-bottom));
+}
+.rpanel.is-open .rpanel__body > * {
+  animation: fadeUp 600ms var(--ease-out) both;
+}
+.rpanel.is-open .rpanel__body > :nth-child(2) { animation-delay: 60ms; }
+.rpanel.is-open .rpanel__body > :nth-child(3) { animation-delay: 120ms; }
+.rpanel.is-open .rpanel__body > :nth-child(n + 4) { animation-delay: 180ms; }
+.rpanel__name {
+  font-family: var(--f-serif);
+  font-weight: 500;
+  font-size: clamp(1.9rem, 1.5rem + 1vw, 2.5rem);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+}
+.rpanel__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+}
+.rpanel__meta li,
+.rpanel__am li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.rpanel__meta .ico,
+.rpanel__am .ico {
+  color: var(--accent);
+  flex: none;
+}
+.rpanel__desc {
+  color: var(--muted);
+}
+.rpanel__h {
+  margin-top: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+.rpanel__am {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 16px;
+  font-size: 0.95rem;
+}
+.rpanel__calc {
+  margin-top: 8px;
+  padding: 22px;
+  border-radius: var(--r);
+  background: var(--paper-2);
+  display: grid;
+  gap: 14px;
+}
+.rpanel__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+.rpanel__l {
+  font-weight: 500;
+}
+.rpanel__row--sum {
+  align-items: baseline;
+  color: var(--muted);
+}
+.rpanel__row--sum em {
+  white-space: nowrap;
+  font-style: normal;
+  color: var(--accent);
+}
+.rpanel__row--sum strong {
+  white-space: nowrap;
+  font-family: var(--f-serif);
+  font-weight: 500;
+  font-size: 2.2rem;
+  line-height: 1;
+  color: var(--ink);
+}
+.rpanel__note {
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+.rpanel__go {
+  width: 100%;
+  margin-top: 6px;
+}
+
+@media (max-width: 760px) {
+  .rcard {
+    width: 82vw;
+  }
+  .rcard--info {
+    width: 82vw;
+  }
+  .rcard__pic,
+  .rinfo {
+    max-height: 62svh;
+  }
+  .rooms__track {
+    gap: 14px;
+  }
+  .rooms__arrows {
+    display: none;
+  }
+  .rooms__ctrl {
+    margin-top: 24px;
+  }
+}
+
+@media (max-width: 1180px) {
+  .rooms__intro .h2,
+  .rooms__side {
+    grid-column: 1 / -1;
+  }
+  .rooms__side {
+    margin-top: 22px;
+  }
+}
+
+/* după „Despre”, camerele nu mai adaugă încă un spațiu mare */
+.about + .rooms .rooms__intro {
+  padding-top: calc(var(--section) * 0.45);
+}

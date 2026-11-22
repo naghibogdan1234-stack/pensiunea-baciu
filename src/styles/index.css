@@ -1,0 +1,34 @@
+/* Toate stilurile site-ului, în ordinea în care se aplică.
+ *
+ * Fiecare fișier ține de o singură componentă (scrie la începutul lui care).
+ * Variantele pentru ecrane mici (@media) stau în fișierul secțiunii, sub regulile ei.
+ * Ordinea de mai jos contează doar unde două fișiere ating același element; un fișier nou se adaugă la final. */
+
+@import './base.css';
+@import './layout/nav.css';
+@import './sections/hero.css';
+@import './ui/date-picker.css';
+@import './sections/about.css';
+@import './sections/rooms.css';
+@import './ui/stepper.css';
+@import './sections/restaurant.css';
+@import './sections/activities.css';
+@import './sections/gallery.css';
+@import './ui/round-button.css';
+@import './layout/footer.css';
+@import './ui/drawer.css';
+@import './ui/forms.css';
+@import './legal/legal.css';
+@import './sections/menu-book.css';
+@import './layout/mobile-bar.css';
+@import './layout/lang-switch.css';
+@import './ui/weather.css';
+@import './layout/page-head.css';
+@import './layout/next-page.css';
+@import './sections/offers.css';
+@import './sections/reviews.css';
+@import './sections/faq.css';
+@import './sections/contact.css';
+@import './layout/curtain.css';
+@import './layout/drag-cursor.css';
+@import './booking/booking.css';

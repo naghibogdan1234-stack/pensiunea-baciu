@@ -1,0 +1,258 @@
+/* Bannerul de cookie-uri, setările și paginile legale.
+   Componenta: components/legal/ */
+
+.cookie {
+  position: fixed;
+  z-index: 150;
+  right: var(--m);
+  bottom: 24px;
+  width: min(460px, calc(100vw - 24px));
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: var(--r);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(28, 36, 32, 0.06); /* taste-skill-ignore */
+  opacity: 0;
+  transform: translateY(24px);
+  pointer-events: none;
+  transition: opacity 500ms var(--ease-out), transform 600ms var(--ease-out);
+}
+.cookie.is-in {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+.cookie__t {
+  font-family: var(--f-serif);
+  font-size: 1.5rem;
+  line-height: 1.1;
+}
+.cookie__p {
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+.cookie__btns {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.3fr;
+  gap: 8px;
+}
+.cookie__btns .btn {
+  padding-inline: 0.8em;
+  min-height: 46px;
+}
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 260;
+  background: rgba(10, 16, 12, 0.55);
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 260ms ease, visibility 0s linear 260ms;
+}
+.modal.is-open {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 260ms ease, visibility 0s;
+}
+.modal__box {
+  position: relative;
+  width: min(580px, 100%);
+  max-height: 90svh;
+  overflow: auto;
+  background: var(--paper);
+  border-radius: var(--r);
+  padding: clamp(26px, 4vw, 42px);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  transform: scale(0.97);
+  transition: transform 300ms var(--ease-out);
+}
+.modal.is-open .modal__box {
+  transform: none;
+}
+.ck {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.ck__row {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  padding: 16px 18px;
+  background: var(--paper-2);
+  border-radius: var(--r);
+}
+label.ck__row {
+  cursor: pointer;
+}
+.ck__row input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.ck__name {
+  font-weight: 500;
+}
+.ck__always {
+  font-size: 0.875rem;
+  color: var(--accent);
+  font-weight: 500;
+  white-space: nowrap;
+}
+.modal__btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.legal {
+  position: fixed;
+  inset: 0;
+  z-index: 270;
+  background: var(--paper);
+  color: var(--ink);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(16px);
+  transition: opacity 320ms ease, transform 420ms var(--ease-out), visibility 0s linear 420ms;
+}
+.legal.is-open {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition: opacity 320ms ease, transform 420ms var(--ease-out), visibility 0s;
+}
+.legal__box {
+  height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.legal__bar {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 14px var(--m);
+  background: var(--paper);
+  box-shadow: 0 1px 0 rgba(28, 36, 32, 0.08); /* taste-skill-ignore */
+}
+.legal__tabs {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.legal__tabs button {
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  transition: background-color 180ms ease, color 180ms ease;
+}
+.legal__tabs button.on {
+  background: var(--ink);
+  color: var(--paper);
+}
+.legal__doc {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 48px var(--m) 96px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  font-size: 1.02rem;
+  line-height: 1.65;
+}
+.legal__doc h3 {
+  font-family: var(--f-serif);
+  font-weight: 500;
+  font-size: 1.5rem;
+  margin-top: 18px;
+}
+.legal__doc ul {
+  list-style: disc;
+  padding-left: 1.2em;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.ltable {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.92rem;
+}
+.ltable > div {
+  display: grid;
+  grid-template-columns: 1.1fr 0.8fr 1.6fr 1fr;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--paper-2);
+}
+.ltable__h {
+  font-weight: 600;
+}
+
+@media (max-width: 900px) {
+  .cookie {
+    left: 12px;
+    right: 12px;
+    width: auto;
+    padding: 20px;
+    bottom: calc(82px + env(safe-area-inset-bottom));
+  }
+}
+
+@media (max-width: 760px) {
+  .cookie__btns .btn {
+    padding-inline: 0.5em;
+    font-size: 0.92rem;
+  }
+  .ltable > div {
+    grid-template-columns: 1fr 1fr;
+  }
+  /* bannerul de cookie-uri, mic, ca să nu acopere numele pensiunii */
+  .cookie {
+    padding: 16px 16px 14px;
+    gap: 10px;
+  }
+  .cookie__t {
+    display: none;
+  }
+  .cookie__p {
+    font-size: 0.875rem;
+    line-height: 1.45;
+  }
+  .cookie__btns .btn {
+    min-height: 44px;
+    font-size: 0.875rem;
+  }
+}
+.cookie__short {
+  display: none;
+}
+
+@media (max-width: 760px) {
+  .cookie__long {
+    display: none;
+  }
+  .cookie__short {
+    display: inline;
+  }
+  .cookie__btns {
+    gap: 6px;
+  }
+}

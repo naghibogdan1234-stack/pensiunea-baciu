@@ -1,0 +1,258 @@
+/* Adresa, programul și harta (cu schița desenată cât timp harta e oprită).
+   Componenta: components/sections/Visit.jsx */
+
+.visit {
+  background: var(--paper-2);
+}
+.visit__in {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--gap);
+  row-gap: 48px;
+  align-items: start;
+}
+.visit__info {
+  grid-column: 1 / 6;
+  display: grid;
+  gap: 28px;
+  justify-items: start;
+}
+.visit__map {
+  grid-column: 7 / 13;
+  position: sticky;
+  top: 110px;
+  width: 100%;
+}
+.visit__dl {
+  display: grid;
+  gap: 18px;
+}
+.visit__dl dt,
+.visit__hours dt {
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+.visit__dl dd {
+  font-size: 1.05rem;
+  line-height: 1.5;
+  max-width: 44ch;
+}
+.visit__hours {
+  width: 100%;
+  display: grid;
+  gap: 8px;
+  padding-top: 22px;
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--ink) 12%, transparent); /* taste-skill-ignore */
+}
+.visit__hours div {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+}
+.visit__hours dt {
+  font-size: 0.95rem;
+}
+.visit__hours dd {
+  text-align: right;
+}
+.visit__links {
+  display: grid;
+  gap: 10px;
+}
+.visit__tel {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 36px;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1.1rem;
+  overflow-wrap: anywhere;
+}
+.visit__tel .ico {
+  color: var(--accent);
+  flex: none;
+}
+.visit__btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.map {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  max-height: calc(100svh - 150px);
+  width: 100%;
+  border-radius: var(--r);
+  overflow: hidden;
+  background: var(--forest);
+}
+.map iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.map__off {
+  position: absolute;
+  inset: 0;
+  color: var(--on-forest);
+}
+.map__sketch {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.map__contour path {
+  fill: none;
+  stroke: rgba(201, 160, 99, 0.16);
+  stroke-width: 1;
+}
+.map__river {
+  fill: none;
+  stroke: rgba(150, 186, 196, 0.55);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+.map__road {
+  fill: none;
+  stroke: var(--on-forest);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-dasharray: 420;
+  stroke-dashoffset: 420;
+  animation: road 2.4s var(--ease-in-out) 400ms forwards;
+}
+.map__slope {
+  stroke: rgba(243, 240, 234, 0.5);
+  stroke-width: 6;
+  stroke-linecap: round;
+}
+.map__dot {
+  fill: var(--on-forest);
+}
+.map__lbl {
+  fill: var(--on-forest-muted);
+  font-family: var(--f-sans);
+  font-size: 12px;
+}
+.map__lbl--town {
+  fill: var(--on-forest);
+  font-family: var(--f-serif);
+  font-size: 18px;
+}
+.map__lbl--river {
+  fill: rgba(150, 186, 196, 0.9);
+  font-style: italic;
+}
+.map__lbl--here {
+  fill: var(--brass);
+  font-family: var(--f-serif);
+  font-size: 17px;
+}
+.map__lbl--alt {
+  fill: var(--on-forest-muted);
+}
+.map__note {
+  fill: rgba(243, 240, 234, 0.4);
+  font-family: var(--f-sans);
+  font-size: 10px;
+}
+.map__pinpath {
+  fill: var(--brass);
+}
+.map__spin {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: pin 2.6s var(--ease-in-out) infinite;
+}
+.map__msg {
+  position: absolute;
+  inset: auto 0 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  padding: clamp(22px, 3vw, 40px);
+}
+.map__t {
+  font-family: var(--f-serif);
+  font-size: 1.9rem;
+  line-height: 1.1;
+}
+.map__msg p:not(.map__t) {
+  max-width: 44ch;
+  font-size: 0.98rem;
+  color: var(--on-forest-muted);
+}
+.map__btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+@media (max-width: 980px) {
+  .visit__info,
+  .visit__map {
+    grid-column: 1 / -1;
+  }
+  .visit__map {
+    position: static;
+  }
+  .map {
+    aspect-ratio: 4 / 3;
+  }
+}
+
+@media (max-width: 760px) {
+  .map {
+    aspect-ratio: 4 / 5;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .map__spin,
+  .map__road {
+    animation: none;
+  }
+}
+
+/* harta oprită, pe ecrane înguste: desenul sus, mesajul dedesubt (nu peste desen) */
+@media (max-width: 980px) {
+  .map {
+    aspect-ratio: auto;
+    max-height: none;
+  }
+  .map__off {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  .map__sketch {
+    position: relative;
+    height: clamp(260px, 62vw, 420px);
+  }
+  .map__msg {
+    position: relative;
+    inset: auto;
+    padding-top: 4px;
+  }
+  .map:has(iframe) {
+    aspect-ratio: 4 / 5;
+  }
+}
+
+@keyframes road {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes pin {
+  50% {
+    transform: translateY(-6px);
+  }
+}

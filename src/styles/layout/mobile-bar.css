@@ -1,0 +1,25 @@
+/* Bara de jos de pe telefon (Sună / Rezervă).
+   Componenta: components/layout/MobileBar.jsx */
+
+.mbar {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .mbar {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    position: fixed;
+    z-index: 80;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+    background: var(--paper);
+    box-shadow: 0 -1px 0 rgba(28, 36, 32, 0.08); /* taste-skill-ignore */
+  }
+  .mbar .btn {
+    min-height: 48px;
+  }
+}

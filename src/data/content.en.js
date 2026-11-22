@@ -1,16 +1,21 @@
-// English version of content.js. Same names; numbers, ids and pictures come from the Romanian file.
+// Versiunea în engleză a content.js.
+// Aici stau doar textele. Prețurile, pozele, id-urile și ordinea vin din content.js, ca să nu poată ajunge diferite.
+// O listă se traduce așa: merge(RO.LISTA, { cheie: { câmpuri traduse } }, 'câmpul după care se potrivesc').
 import * as RO from './content.js'
 
-const merge = (list, tr) => list.map((x) => ({ ...x, ...tr[x.id] }))
+/** pune peste fiecare element din `list` traducerea lui din `tr`, găsită după câmpul `key` */
+const merge = (list, tr, key = 'id') => list.map((x) => ({ ...x, ...tr[x[key]] }))
 
-export const AMENITIES = [
-  ['bath', 'Private bathroom'],
-  ['tv', 'Smart TV'],
-  ['fridge', 'Fridge'],
-  ['wifi', 'Free WiFi'],
-  ['coffee', 'Breakfast included'],
-  ['car', 'Free parking'],
-]
+// după iconița din content.js
+const AMENITY_TEXT = {
+  bath: { label: 'Private bathroom' },
+  tv: { label: 'Smart TV' },
+  fridge: { label: 'Fridge' },
+  wifi: { label: 'Free WiFi' },
+  coffee: { label: 'Breakfast included' },
+  car: { label: 'Free parking' },
+}
+export const AMENITIES = merge(RO.AMENITIES, AMENITY_TEXT, 'icon')
 
 export const ROOMS = merge(RO.ROOMS, {
   matrimonial: {
@@ -41,7 +46,7 @@ const ACT = {
     text: 'The riding centre has 16 horses, all trained in the arena. Beginners learn in the outdoor arena; once you feel confident, you ride out into the countryside.',
     chips: ['Arena lesson · 45 min · 100 lei', 'Ride · 60 min · 120 lei', 'Pony · 10 min · 30 lei', 'Carriage · 45 min · 300 lei'],
     note: 'Monday – Friday 10:00 – 15:00 · Saturday and Sunday 10:00 – 17:00',
-    cta: [['book', 'Book a ride', 'Echitație'], ['call', 'Call the stables']],
+    cta: [{ action: 'book', label: 'Book a ride', type: 'Echitație' }, { action: 'call', label: 'Call the stables' }],
   },
   bob: {
     name: 'Alpine coaster',
@@ -49,7 +54,7 @@ const ACT = {
     alt: 'The alpine coaster track winding down through fir trees, seen from above in summer',
     text: 'The longest alpine coaster in Romania, almost all of it through the forest. You set the speed and you brake. Little ones ride in front, with an adult behind.',
     chips: ['Under 14 · 25 lei / ride', 'Over 14 · 30 lei / ride', 'Children from age 3'],
-    cta: [['tariffs', 'All prices']],
+    cta: [{ action: 'tariffs', label: 'All prices' }],
   },
   teren: {
     name: 'Sports court',
@@ -71,7 +76,7 @@ const ACT = {
     alt: 'The Bradul slope with skiers between fir trees, the town in the valley below',
     text: 'Three slopes, one intermediate and two easy, right by the guesthouse. Bradul is 1,200 m long and good for beginners; Măgheruș is 460 m for confident skiers.',
     chips: ['Bradul · 1,200 m · easy', 'Măgheruș · 460 m · intermediate', 'Drag lift · 670 people / hour'],
-    cta: [['book', 'A room by the slope', 'Cazare']],
+    cta: [{ action: 'book', label: 'A room by the slope', type: 'Cazare' }],
   },
   nocturna: {
     name: 'Night skiing',
@@ -86,7 +91,7 @@ const ACT = {
     alt: 'Skier in a red suit carving down a sunny slope',
     text: 'Skis, boots, snowboards, poles, helmets, goggles and sledges, by the day, between 10:00 and 18:00. An adult’s ID is required to rent.',
     chips: ['Full set · 70 lei / day', 'Snowboard · 45 lei / day', 'Sledge · 30 lei / day'],
-    cta: [['call', 'Ask about equipment'], ['tariffs', 'All prices']],
+    cta: [{ action: 'call', label: 'Ask about equipment' }, { action: 'tariffs', label: 'All prices' }],
   },
   'bob-iarna': {
     name: 'Coaster in the snow',
@@ -94,7 +99,7 @@ const ACT = {
     alt: 'An alpine coaster sledge on its rails in the snow, fir trees behind',
     text: 'The coaster runs through the snow-covered forest. The longest in Romania, with white firs on both sides.',
     chips: ['Under 14 · 25 lei / ride', 'Over 14 · 30 lei / ride'],
-    cta: [['tariffs', 'All prices']],
+    cta: [{ action: 'tariffs', label: 'All prices' }],
   },
 }
 export const ACTIVITIES = {
@@ -107,21 +112,21 @@ export const TARIFFS = [
     title: 'Alpine coaster',
     note: 'lei, per person per ride',
     rows: [
-      ['Children under 14', '25'],
-      ['Over 14', '30'],
+      { item: 'Children under 14', price: '25' },
+      { item: 'Over 14', price: '30' },
     ],
   },
   {
     title: 'Horse riding',
     note: 'lei · book by phone',
     rows: [
-      ['Arena lesson, 45 minutes', '100'],
-      ['Ride, 60 minutes', '120'],
-      ['Ride on an Arabian horse, 60 minutes', '150'],
-      ['Group ride, 60 minutes, per person', '100'],
-      ['Group ride on Arabian horses, 2–6 people, per person', '120'],
-      ['Carriage ride, 45 minutes, up to 4 people', '300'],
-      ['Pony ride, 10 minutes (then 3 lei a minute)', '30'],
+      { item: 'Arena lesson, 45 minutes', price: '100' },
+      { item: 'Ride, 60 minutes', price: '120' },
+      { item: 'Ride on an Arabian horse, 60 minutes', price: '150' },
+      { item: 'Group ride, 60 minutes, per person', price: '100' },
+      { item: 'Group ride on Arabian horses, 2–6 people, per person', price: '120' },
+      { item: 'Carriage ride, 45 minutes, up to 4 people', price: '300' },
+      { item: 'Pony ride, 10 minutes (then 3 lei a minute)', price: '30' },
     ],
     foot: 'Book five 60-minute sessions and one of them is free.',
   },
@@ -129,35 +134,37 @@ export const TARIFFS = [
     title: 'Ski and snowboard rental',
     note: 'lei per day, 10:00 – 18:00',
     rows: [
-      ['Skis, boots and poles', '70'],
-      ['Skis and boots', '60'],
-      ['Skis and poles', '50'],
-      ['Skis or snowboard', '45'],
-      ['Boots and poles', '35'],
-      ['Ski or snowboard boots', '30'],
-      ['Sledge', '30'],
-      ['Poles', '20'],
-      ['Helmet', '20'],
-      ['Goggles', '20'],
+      { item: 'Skis, boots and poles', price: '70' },
+      { item: 'Skis and boots', price: '60' },
+      { item: 'Skis and poles', price: '50' },
+      { item: 'Skis or snowboard', price: '45' },
+      { item: 'Boots and poles', price: '35' },
+      { item: 'Ski or snowboard boots', price: '30' },
+      { item: 'Sledge', price: '30' },
+      { item: 'Poles', price: '20' },
+      { item: 'Helmet', price: '20' },
+      { item: 'Goggles', price: '20' },
     ],
     foot: 'Equipment goes back by 18:00 on the last rental day.',
   },
 ]
 
 export const HOURS = [
-  ['Restaurant', 'daily, 10:00 – 22:00'],
-  ['Phone bookings', 'daily, 9:00 – 21:00'],
-  ['Riding, Monday – Friday', '10:00 – 15:00'],
-  ['Riding, Saturday – Sunday', '10:00 – 17:00'],
+  { label: 'Restaurant', hours: 'daily, 10:00 – 22:00' },
+  { label: 'Phone bookings', hours: 'daily, 9:00 – 21:00' },
+  { label: 'Riding, Monday – Friday', hours: '10:00 – 15:00' },
+  { label: 'Riding, Saturday – Sunday', hours: '10:00 – 17:00' },
 ]
 
-export const LINKS = [
-  ['camere', 'Rooms', 'camera-matrimonial', 'Fourteen rooms, breakfast included'],
-  ['restaurant', 'Restaurant', 'terasa-vedere', 'Romanian cooking and a menu to leaf through'],
-  ['activitati', 'Activities', 'manej', 'Horses, coaster, slopes, summer and winter'],
-  ['galerie', 'Gallery', 'panorama', 'The place in photographs, and what guests say'],
-  ['contact', 'Contact', 'fatada', 'Address, hours, map and questions'],
-]
+// după pagină; pozele vin din content.js
+const LINK_TEXT = {
+  camere: { label: 'Rooms', line: 'Fourteen rooms, breakfast included' },
+  restaurant: { label: 'Restaurant', line: 'Romanian cooking and a menu to leaf through' },
+  activitati: { label: 'Activities', line: 'Horses, coaster, slopes, summer and winter' },
+  galerie: { label: 'Gallery', line: 'The place in photographs, and what guests say' },
+  contact: { label: 'Contact', line: 'Address, hours, map and questions' },
+}
+export const LINKS = merge(RO.LINKS, LINK_TEXT, 'page')
 
 const HEAD = {
   camere: {
@@ -195,34 +202,31 @@ export const SLIDES = [
   { img: 'bob-vara', alt: 'The alpine coaster running down through the forest in summer, seen from a drone', cap: 'The coaster, through the forest' },
 ]
 
-export const PHOTOS = [
-  ['panorama', 'Summer, from above', 'The meadows and forests around Toplița, seen from above the guesthouse'],
-  ['terasa-apus', 'The terrace at sunset', 'A platter of cured meats and cheese on the terrace, the hills in evening light'],
-  ['calarie-manej', 'Lessons in the arena', 'Children on horseback in the arena, led by instructors, mountains behind'],
-  ['iarna-drona', 'Winter, from above', 'The coaster track and the snowy field around the guesthouse'],
-  ['restaurant-geamuri', 'The window corner', 'Tables by the restaurant’s big windows, looking onto the yard'],
-  ['masa-festiva', 'The event hall', 'A round table laid for a wedding or a christening, by the window with fir trees'],
-  ['partie-vedere', 'The slope', 'Skiers on the slope, with the snowy Călimani Mountains in the distance'],
-  ['ponei', 'The pony', 'The smallest rider on a pony, led round the arena by an instructor'],
-  ['camera-twin', 'Twin beds', 'The double room with two single beds, under the roof window'],
-  ['caprioara', 'Forest neighbours', 'Two deer on the meadow by the slope, in summer', '70% 55%'],
-  ['calarie-copil', 'First time in the saddle', 'A child on horseback, helped by an instructor'],
-  ['terasa', 'The wooden terrace', 'The long tables on the terrace, facing the mountains'],
-]
+// după numele pozei; ordinea și încadrarea (pos) vin din content.js
+const PHOTO_TEXT = {
+  'panorama': { title: 'Summer, from above', desc: 'The meadows and forests around Toplița, seen from above the guesthouse' },
+  'terasa-apus': { title: 'The terrace at sunset', desc: 'A platter of cured meats and cheese on the terrace, the hills in evening light' },
+  'calarie-manej': { title: 'Lessons in the arena', desc: 'Children on horseback in the arena, led by instructors, mountains behind' },
+  'iarna-drona': { title: 'Winter, from above', desc: 'The coaster track and the snowy field around the guesthouse' },
+  'restaurant-geamuri': { title: 'The window corner', desc: 'Tables by the restaurant’s big windows, looking onto the yard' },
+  'masa-festiva': { title: 'The event hall', desc: 'A round table laid for a wedding or a christening, by the window with fir trees' },
+  'partie-vedere': { title: 'The slope', desc: 'Skiers on the slope, with the snowy Călimani Mountains in the distance' },
+  'ponei': { title: 'The pony', desc: 'The smallest rider on a pony, led round the arena by an instructor' },
+  'camera-twin': { title: 'Twin beds', desc: 'The double room with two single beds, under the roof window' },
+  'caprioara': { title: 'Forest neighbours', desc: 'Two deer on the meadow by the slope, in summer' },
+  'calarie-copil': { title: 'First time in the saddle', desc: 'A child on horseback, helped by an instructor' },
+  'terasa': { title: 'The wooden terrace', desc: 'The long tables on the terrace, facing the mountains' },
+}
+export const PHOTOS = merge(RO.PHOTOS, PHOTO_TEXT, 'img')
 
 export const RATINGS = RO.RATINGS.map((r) => ({
   ...r,
   score: r.score.replace(',', '.'),
   note: r.src === 'Travelminit' ? 'reviews from staying guests' : `reviews on ${r.src}`,
 }))
-export const SUBSCORES = [
-  ['Friendly staff', 9.8],
-  ['Facilities', 9.8],
-  ['Cleanliness', 9.7],
-  ['Restaurant', 9.6],
-  ['Value for money', 9.6],
-  ['Comfort', 9.5],
-]
+// aceleași note ca în content.js, doar etichetele traduse (în aceeași ordine)
+const SUBSCORE_LABELS = ['Friendly staff', 'Facilities', 'Cleanliness', 'Restaurant', 'Value for money', 'Comfort']
+export const SUBSCORES = RO.SUBSCORES.map((x, i) => ({ ...x, label: SUBSCORE_LABELS[i] }))
 const REV = [
   {
     text: 'A spectacular location. A wonderful guesthouse – the room spacious and clean, friendly staff and a warm atmosphere.',
@@ -252,25 +256,25 @@ const OFF = {
     kicker: 'Stay',
     title: 'Stay longer, pay less',
     text: 'The discount applies to the whole stay automatically: 6% for 3 nights, 9% for 4 nights and 12% from 5 nights up.',
-    cta: ['book', 'Choose your dates', 'Cazare'],
+    cta: { action: 'book', label: 'Choose your dates', type: 'Cazare' },
   },
   echitatie: {
     kicker: 'Riding',
     title: 'The fifth ride is on us',
     text: 'Book five 60-minute riding sessions and one is free. Good for anyone who wants to learn properly.',
-    cta: ['book', 'Book a ride', 'Echitație'],
+    cta: { action: 'book', label: 'Book a ride', type: 'Echitație' },
   },
   vacanta: {
     kicker: 'Payment',
     title: 'Pay with a Romanian holiday card',
     text: 'We accept Pluxee (Sodexo), Up and Edenred holiday cards, as well as cash, bank card or transfer.',
-    cta: ['call', 'Ask by phone'],
+    cta: { action: 'call', label: 'Ask by phone' },
   },
   evenimente: {
     kicker: 'Events',
     title: 'Weddings, christenings and celebrations',
     text: 'The event hall looks out over the arena and the mountains. We offer a set menu or put one together with you.',
-    cta: ['book', 'Ask for a quote', 'Eveniment'],
+    cta: { action: 'book', label: 'Ask for a quote', type: 'Eveniment' },
   },
 }
 export const OFFERS = merge(RO.OFFERS, OFF)

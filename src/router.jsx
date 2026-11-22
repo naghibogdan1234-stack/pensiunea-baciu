@@ -1,56 +1,75 @@
-// Pagini separate, cu adrese de forma #/camere. Merge pe orice găzduire, fără setări de server.
+// Paginile site-ului, cu adrese de forma #/camere.
+//
+// Am ales adrese cu # (hash) ca site-ul să meargă pe orice găzduire, fără reguli de server:
+// Netlify, GitHub Pages sau un hosting clasic servesc mereu același index.html.
+//
+//   #/            prima pagină (toate secțiunile, pe scurt)
+//   #/camere      #/restaurant   #/activitati   #/galerie   #/contact
+//
+// Ce secțiuni apar pe fiecare pagină se hotărăște în src/pages.jsx.
+// Alte ancore (#meniu, #confidentialitate) nu schimbă pagina: sunt secțiuni sau ferestre.
 import { createContext, useContext, useEffect, useState } from 'react'
+import { EVENTS } from './events.js'
 
 export const ROUTES = ['camere', 'restaurant', 'activitati', 'galerie', 'contact']
 
-const parse = (h) => {
-  if (!h.startsWith('#/')) return null
-  const slug = h.slice(2).split(/[/?]/)[0]
+/** '#/camere' → 'camere'; '#/' sau o pagină necunoscută → '' (prima pagină); '#meniu' → null (nu e pagină) */
+const pageFromHash = (hash) => {
+  if (!hash.startsWith('#/')) return null
+  const slug = hash.slice(2).split(/[/?]/)[0]
   return ROUTES.includes(slug) ? slug : ''
 }
 
-const Ctx = createContext({ page: '' })
+const RouterContext = createContext({ page: '' })
 
 export function RouterProvider({ children }) {
-  const [page, setPage] = useState(() => parse(location.hash) ?? '')
+  const [page, setPage] = useState(() => pageFromHash(location.hash) ?? '')
   useEffect(() => {
-    // alte ancore (#meniu, paginile legale) nu schimbă pagina
-    const on = () => {
-      const p = parse(location.hash)
-      if (p !== null) setPage(p)
+    const onHashChange = () => {
+      const next = pageFromHash(location.hash)
+      if (next !== null) setPage(next)
     }
-    window.addEventListener('hashchange', on)
-    return () => window.removeEventListener('hashchange', on)
+    window.addEventListener('hashchange', onHashChange)
+    return () => window.removeEventListener('hashchange', onHashChange)
   }, [])
-  return <Ctx.Provider value={{ page }}>{children}</Ctx.Provider>
+  return <RouterContext.Provider value={{ page }}>{children}</RouterContext.Provider>
 }
 
-export const usePage = () => useContext(Ctx).page
+/** pagina curentă: '' sau unul din ROUTES */
+export const usePage = () => useContext(RouterContext).page
 export const href = (page) => (page ? `#/${page}` : '#/')
 
-// cortina dintre pagini: acoperă ecranul (COVER ms), schimbă pagina, apoi se ridică
+// Cortina dintre pagini: coboară peste ecran în COVER ms, apoi schimbăm pagina pe dedesubt,
+// apoi se ridică (components/layout/Curtain.jsx). Ritmul e același și în styles/layout/curtain.css.
 export const COVER = 560
-let busy = false
+let busy = false // o schimbare de pagină odată
+
+/** Schimbă pagina, cu cortină. Dacă pagina e deja deschisă, urcă lin sus. */
 export function navigate(page) {
-  const h = href(page)
-  if (location.hash === h || (!page && !location.hash.startsWith('#/') && document.querySelector('.hero'))) {
-    window.__lenis ? window.__lenis.scrollTo(0, { duration: 1 }) : window.scrollTo({ top: 0, behavior: 'smooth' })
+  const target = href(page)
+  const alreadyHome = !page && !location.hash.startsWith('#/') && document.querySelector('.hero')
+  if (location.hash === target || alreadyHome) {
+    if (window.__lenis) window.__lenis.scrollTo(0, { duration: 1 })
+    else window.scrollTo({ top: 0, behavior: 'smooth' })
     return
   }
   if (busy) return
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    location.hash = h
+    location.hash = target // fără cortină
     return
   }
   busy = true
-  window.dispatchEvent(new CustomEvent('baciu:curtain', { detail: { page } }))
+  window.dispatchEvent(new CustomEvent(EVENTS.curtain, { detail: { page } }))
   setTimeout(() => {
-    location.hash = h
+    location.hash = target
     busy = false
   }, COVER)
 }
 
-// link către o pagină; dacă pagina e deja deschisă, urcă sus
+/**
+ * Link către o pagină: <Link to="camere">Camere</Link>.
+ * E un <a> obișnuit (merge și „deschide în tab nou”), dar la click normal trece prin navigate().
+ */
 export function Link({ to, children, onClick, ...rest }) {
   return (
     <a
@@ -58,7 +77,7 @@ export function Link({ to, children, onClick, ...rest }) {
       onClick={(e) => {
         onClick?.(e)
         if (e.defaultPrevented) return
-        if (e.metaKey || e.ctrlKey || e.shiftKey) return
+        if (e.metaKey || e.ctrlKey || e.shiftKey) return // tab / fereastră nouă: lăsăm browserul
         e.preventDefault()
         navigate(to)
       }}

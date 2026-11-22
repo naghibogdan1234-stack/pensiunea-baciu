@@ -385,3 +385,17 @@ section {
 .skip:focus {
   top: 12px;
 }
+
+/* ritmul pe ecrane mici: margini și spații mai mici */
+@media (max-width: 900px) {
+  :root {
+    --section: clamp(4.5rem, 14vw, 6.5rem);
+  }
+}
+
+@media (max-width: 760px) {
+  :root {
+    --m: 20px;
+    --gap: 14px;
+  }
+}

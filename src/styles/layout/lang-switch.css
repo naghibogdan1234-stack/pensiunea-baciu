@@ -1,0 +1,75 @@
+/* Butoanele RO / EN.
+   Componenta: components/layout/LangSwitch.jsx */
+
+.lang {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, currentColor 30%, transparent); /* taste-skill-ignore */
+}
+.lang button {
+  min-width: 34px;
+  height: 28px;
+  padding: 0 8px;
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: inherit;
+  opacity: 0.7;
+  transition: background-color 200ms ease, color 200ms ease, opacity 200ms ease, transform 140ms var(--ease-out);
+}
+.lang button:active {
+  transform: scale(0.94);
+}
+.lang button.on {
+  opacity: 1;
+  background: var(--ink);
+  color: var(--paper);
+}
+.nav--over .lang button.on,
+.nav--open .lang button.on,
+.sheet .lang button.on,
+.foot .lang button.on {
+  background: var(--on-forest);
+  color: var(--forest);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .lang button:not(.on):hover {
+    opacity: 1;
+  }
+}
+.nav__end .lang {
+  margin-right: 4px;
+}
+
+/* pe telefon, limba stă lângă butonul de meniu: doar butonul pentru cealaltă limbă */
+.nav__start .lang {
+  display: none;
+}
+
+@media (max-width: 760px) {
+  .nav__end .lang {
+    display: none;
+  }
+  .nav__start .lang {
+    display: inline-flex;
+    box-shadow: none; /* taste-skill-ignore */
+    padding: 0;
+  }
+  .nav__start .lang button.on {
+    display: none;
+  }
+  .nav__start .lang button {
+    opacity: 1;
+    min-width: 44px;
+    height: 44px;
+    font-size: 0.875rem;
+  }
+  .nav--open .nav__start .lang {
+    display: none;
+  }
+}
