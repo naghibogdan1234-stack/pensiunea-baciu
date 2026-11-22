@@ -64,6 +64,7 @@ export default function Nav() {
   const [small, setSmall] = useState(false)
   const [open, setOpen] = useState(false)
   const [hover, setHover] = useState(0)
+  const [seen, setSeen] = useState(false) // pozele din meniu se încarcă abia la prima deschidere
   const items = [['', l.start, 'vara-drona', l.startLine], ...LINKS]
 
   useEffect(() => {
@@ -82,6 +83,9 @@ export default function Nav() {
   }, [page])
 
   useLockScroll(open)
+  useEffect(() => {
+    if (open) setSeen(true)
+  }, [open])
   useEffect(() => {
     const k = (e) => e.key === 'Escape' && setOpen(false)
     window.addEventListener('keydown', k)
@@ -102,13 +106,23 @@ export default function Nav() {
       <header className={`nav ${over && !open ? 'nav--over' : ''} ${small ? 'nav--small' : ''} ${open ? 'nav--open' : ''}`}>
         <div className="nav__in">
           <div className="nav__start">
-            <button type="button" className="nav__menu" aria-expanded={open} aria-controls="meniu-site" onClick={() => setOpen((o) => !o)}>
+            <button
+              type="button"
+              className="nav__menu"
+              aria-expanded={open}
+              aria-controls="meniu-site"
+              aria-label={open ? l.close : l.menu}
+              onClick={() => setOpen((o) => !o)}
+            >
               <span className="nav__burger" aria-hidden="true">
                 <span />
                 <span />
               </span>
-              <span className="nav__menu-t">{open ? l.close : l.menu}</span>
+              <span className="nav__menu-t" aria-hidden="true">
+                {open ? l.close : l.menu}
+              </span>
             </button>
+            <LangSwitch />
           </div>
           <Link to="" className="nav__mark" aria-label={l.home}>
             <span className="nav__name">Pensiunea Baciu</span>
@@ -157,7 +171,7 @@ export default function Nav() {
           <div className="sheet__pic" aria-hidden="true">
             {items.map(([id, , img], i) => (
               <div key={id || 'home'} className={`sheet__img ${hover === i ? 'on' : ''}`}>
-                <Img name={img} alt="" sizes="40vw" />
+                {seen && <Img name={img} alt="" sizes="40vw" />}
               </div>
             ))}
           </div>

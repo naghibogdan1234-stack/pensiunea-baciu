@@ -25,6 +25,8 @@ const L = {
     offP: 'Harta vine de la Google Maps. Dacă o pornești, Google poate seta cookie-uri și îți primește adresa IP.',
     once: 'Arată harta o dată',
     always: 'Arată mereu',
+    slope: 'Pârtia Bradul',
+    sketch: 'schiță, nu la scară',
   },
   en: {
     h: 'Find us',
@@ -44,6 +46,8 @@ const L = {
     offP: 'The map comes from Google Maps. If you turn it on, Google may set cookies and receives your IP address.',
     once: 'Show the map once',
     always: 'Always show',
+    slope: 'Bradul slope',
+    sketch: 'sketch, not to scale',
   },
 }
 
@@ -58,14 +62,27 @@ function MapBlock() {
         <iframe title={l.mapTitle} src={MAPS_EMBED} loading="lazy" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen />
       ) : (
         <div className="map__off">
-          <svg className="map__lines" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-            {Array.from({ length: 9 }, (_, i) => (
-              <path key={i} d={`M-20 ${40 + i * 30} C 80 ${10 + i * 32}, 160 ${70 + i * 28}, 240 ${36 + i * 31} S 380 ${60 + i * 29}, 430 ${30 + i * 30}`} />
-            ))}
+          <svg className="map__sketch" viewBox="0 0 400 500" preserveAspectRatio="xMidYMin slice" aria-hidden="true">
+            <g className="map__contour">
+              {Array.from({ length: 11 }, (_, i) => (
+                <path key={i} d={`M-20 ${30 + i * 34} C 90 ${8 + i * 33}, 170 ${62 + i * 30}, 250 ${28 + i * 33} S 380 ${52 + i * 31}, 430 ${20 + i * 34}`} />
+              ))}
+            </g>
+            <path className="map__river" d="M-10 318 C 60 300, 120 334, 190 314 S 320 296, 410 320" />
+            <text className="map__lbl map__lbl--river" x="330" y="296">Mureș</text>
+            <path className="map__road" d="M86 292 C 120 260, 110 228, 160 210 S 210 168, 232 140 S 250 112, 262 104" />
+            <path className="map__slope" d="M296 160 L 270 112" />
+            <text className="map__lbl" x="300" y="176">{l.slope}</text>
+            <text className="map__lbl" x="168" y="236">Băile Banffy</text>
+            <circle className="map__dot" cx="86" cy="292" r="5" />
+            <text className="map__lbl map__lbl--town" x="24" y="282">Toplița</text>
+            <g className="map__spin">
+              <path className="map__pinpath" d="M262 98c-9 0-16 7-16 16 0 12 16 26 16 26s16-14 16-26c0-9-7-16-16-16Zm0 22a6 6 0 1 1 0-12 6 6 0 0 1 0 12Z" transform="translate(0 -42)" />
+            </g>
+            <text className="map__lbl map__lbl--here" x="284" y="84">Pensiunea Baciu</text>
+            <text className="map__lbl map__lbl--alt" x="284" y="100">850 m</text>
+            <text className="map__note" x="380" y="24" textAnchor="end">{l.sketch}</text>
           </svg>
-          <span className="map__pin" aria-hidden="true">
-            <Icon name="pin" size={30} />
-          </span>
           <div className="map__msg">
             <p className="map__t">{l.off}</p>
             <p>{l.offP}</p>

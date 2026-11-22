@@ -109,6 +109,36 @@ export function CountUp({ to, duration = 1600, format = (n) => n.toLocaleString(
   )
 }
 
+/* ---------- Poza care coboară mai încet decât pagina (parallax) ---------- */
+// ref pe secțiune, inner pe stratul cu poza; range = cât coboară poza, în % din înălțimea ei
+export function useParallax(range = 18) {
+  const ref = useRef(null)
+  const inner = useRef(null)
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    let raf = 0
+    const upd = () => {
+      raf = 0
+      const el = ref.current
+      const im = inner.current
+      if (!el || !im) return
+      const r = el.getBoundingClientRect()
+      const p = Math.min(1, Math.max(0, -r.top / r.height))
+      im.style.transform = `translate3d(0, ${(p * range).toFixed(2)}%, 0)`
+    }
+    const on = () => raf || (raf = requestAnimationFrame(upd))
+    upd()
+    window.addEventListener('scroll', on, { passive: true })
+    window.addEventListener('resize', on)
+    return () => {
+      cancelAnimationFrame(raf)
+      window.removeEventListener('scroll', on)
+      window.removeEventListener('resize', on)
+    }
+  }, [range])
+  return [ref, inner]
+}
+
 /* ---------- Navigare ---------- */
 // pe ce pagină separată stă fiecare secțiune
 const SECTION_PAGE = {

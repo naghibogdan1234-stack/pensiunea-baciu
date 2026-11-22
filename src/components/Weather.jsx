@@ -12,6 +12,14 @@ const URL =
 
 let cache = null // o singură cerere pe vizită, împărțită între panouri
 let pending = null
+const KEY = 'baciu-weather'
+const FRESH = 20 * 60 * 1000 // o cerere la 20 de minute, chiar dacă vizitatorul schimbă paginile
+try {
+  const v = JSON.parse(sessionStorage.getItem(KEY) || 'null')
+  if (v && Date.now() - v.t < FRESH) cache = v.w
+} catch {
+  /* fără stocare */
+}
 function load() {
   if (cache) return Promise.resolve(cache)
   if (!pending) {
@@ -32,6 +40,15 @@ function load() {
           sunset: j.daily?.sunset?.[0]?.slice(11, 16) || null,
           max: Math.round(j.daily?.temperature_2m_max?.[0]),
           min: Math.round(j.daily?.temperature_2m_min?.[0]),
+        }
+        if (!Number.isFinite(cache.temp)) {
+          cache = null
+          return null
+        }
+        try {
+          sessionStorage.setItem(KEY, JSON.stringify({ t: Date.now(), w: cache }))
+        } catch {
+          /* fără stocare */
         }
         return cache
       })

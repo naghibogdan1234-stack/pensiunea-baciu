@@ -8,6 +8,7 @@ const CL = {
   ro: {
     t: 'Cookie-uri',
     p: 'Folosim doar ce e necesar ca site-ul să funcționeze. Harta Google se încarcă numai dacă ești de acord, pentru că Google poate seta cookie-uri proprii.',
+    ps: 'Doar cookie-uri necesare. Harta Google pornește numai cu acordul tău.',
     policy: 'Politica de cookie-uri',
     no: 'Refuz',
     set: 'Setări',
@@ -27,6 +28,7 @@ const CL = {
   en: {
     t: 'Cookies',
     p: 'We only use what the site needs to work. The Google map loads only if you agree, because Google may set its own cookies.',
+    ps: 'Only necessary cookies. The Google map loads only with your consent.',
     policy: 'Cookie policy',
     no: 'Decline',
     set: 'Settings',
@@ -103,7 +105,8 @@ export function CookieBanner() {
     <div className={`cookie ${show ? 'is-in' : ''}`} role="region" aria-label={l.t}>
       <p className="cookie__t">{l.t}</p>
       <p className="cookie__p">
-        {l.p}{' '}
+        <span className="cookie__long">{l.p}</span>
+        <span className="cookie__short">{l.ps}</span>{' '}
         <button type="button" className="link" onClick={() => openLegal('cookie-uri')}>
           {l.policy}
         </button>

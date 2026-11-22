@@ -4,16 +4,18 @@ import { useData } from '../data/index.js'
 import { CONTACT } from '../data/content.js'
 import { useT } from '../i18n.jsx'
 import Icon from './Icon.jsx'
+import { Link } from '../router.jsx'
 
 const L = {
-  ro: { h: 'Întrebări frecvente', more: 'Nu găsești răspunsul? Sună-ne, zilnic între 9 și 21.' },
-  en: { h: 'Common questions', more: 'Can’t find your answer? Call us, daily between 9:00 and 21:00.' },
+  ro: { h: 'Întrebări frecvente', more: 'Nu găsești răspunsul? Sună-ne, zilnic între 9 și 21.', all: (n) => `Toate cele ${n} întrebări` },
+  en: { h: 'Common questions', more: 'Can’t find your answer? Call us, daily between 9:00 and 21:00.', all: (n) => `All ${n} questions` },
 }
 
-export default function Faq({ only }) {
+export default function Faq({ only, limit }) {
   const { FAQ } = useData()
   const l = useT(L)
-  const list = only ? FAQ.filter((f) => f.t.includes(only)) : FAQ
+  const all = only ? FAQ.filter((f) => f.t.includes(only)) : FAQ
+  const list = limit ? all.slice(0, limit) : all
   const [open, setOpen] = useState(0)
   return (
     <section id="intrebari" className="faq section" aria-labelledby="faq-h">
@@ -48,6 +50,13 @@ export default function Faq({ only }) {
               </Reveal>
             )
           })}
+          {limit && all.length > limit && (
+            <li className="faq__all">
+              <Link to="contact" className="link link--strong">
+                {l.all(all.length)} →
+              </Link>
+            </li>
+          )}
         </ul>
       </div>
     </section>

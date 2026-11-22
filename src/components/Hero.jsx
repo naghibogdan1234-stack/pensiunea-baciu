@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { motion, useScroll, useTransform } from 'motion/react'
-import { Img, openBooking } from '../lib.jsx'
+import { Img, openBooking, useParallax } from '../lib.jsx'
 import Icon from './Icon.jsx'
 import DatePicker, { shortDate, nightsBetween } from './DatePicker.jsx'
 import { discountFor } from '../data/content.js'
@@ -61,7 +60,6 @@ export default function Hero() {
   const [to, setTo] = useState('')
   const [guests, setGuests] = useState('2')
   const [cal, setCal] = useState(false)
-  const ref = useRef(null)
   const barRef = useRef(null)
 
   // închide calendarul la click în afara barei sau la Escape
@@ -92,8 +90,7 @@ export default function Hero() {
     return () => document.removeEventListener('visibilitychange', on)
   }, [])
 
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
-  const y = useTransform(scrollYProgress, [0, 1], ['0%', '18%'])
+  const [ref, media] = useParallax(18)
 
   const submit = (e) => {
     e.preventDefault()
@@ -102,7 +99,7 @@ export default function Hero() {
 
   return (
     <section className="hero" id="top" ref={ref} aria-label={l.aria}>
-      <motion.div className="hero__media" style={{ y }}>
+      <div className="hero__media" ref={media}>
         <div className="hero__open">
           {SLIDES.map((s, n) => (
             <div key={s.img} className={`hero__slide ${n === i ? 'on' : ''}`} aria-hidden={n !== i}>
@@ -111,7 +108,7 @@ export default function Hero() {
           ))}
         </div>
         <div className="hero__scrim" aria-hidden="true" />
-      </motion.div>
+      </div>
 
       <div className="hero__body wrap">
         <div className="hero__text">

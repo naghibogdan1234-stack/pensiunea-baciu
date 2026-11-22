@@ -14,6 +14,10 @@ import './styles/book.css'
 import './styles/more.css'
 import App from './App.jsx'
 
+// primul ecran e deja desenat din index.html; animațiile lui continuă din același punct, fără să o ia de la capăt
+const since = window.__t0 != null ? Math.round(performance.now() - window.__t0) : 0
+document.documentElement.style.setProperty('--since', `${since}ms`)
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <App />

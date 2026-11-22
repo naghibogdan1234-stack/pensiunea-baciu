@@ -6,14 +6,86 @@
     <title>Pensiunea Baciu · Toplița, Harghita · Cazare, restaurant, bob, echitație și schi</title>
     <meta name="description" content="Pensiunea Baciu din Toplița, la 850 m: 14 camere cu mic dejun inclus, restaurant cu bucate tradiționale românești și terasă, pistă de bob prin pădure, centru de echitație și trei pârtii de schi." />
     <meta name="theme-color" content="#17271e" />
-    <meta property="og:title" content="Pensiunea Baciu · Toplița" />
-    <meta property="og:description" content="Cazare cu mic dejun, restaurant cu bucate românești, bob prin pădure, echitație și schi la 850 m, în Toplița." />
-    <meta property="og:image" content="img/vara-drona.webp" />
-    <link rel="icon" type="image/png" href="./favicon.png" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Pensiunea Baciu" />
+    <meta property="og:locale" content="ro_RO" />
+    <meta property="og:locale:alternate" content="en_GB" />
+    <meta property="og:url" content="%VITE_SITE_URL%" />
+    <meta property="og:title" content="Pensiunea Baciu · Toplița, 850 m" />
+    <meta property="og:description" content="Cazare cu mic dejun, restaurant cu bucate românești, bob prin pădure, echitație și schi, în Toplița." />
+    <meta property="og:image" content="%VITE_SITE_URL%og.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Pensiunea Baciu văzută de sus, vara, cu manejul și pădurea de brazi" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="canonical" href="%VITE_SITE_URL%" />
+    <link rel="icon" type="image/png" sizes="64x64" href="./favicon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png" />
+    <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+    <link rel="preconnect" href="https://api.open-meteo.com" crossorigin />
+    
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "LodgingBusiness",
+        "name": "Pensiunea Baciu",
+        "url": "%VITE_SITE_URL%",
+        "image": "%VITE_SITE_URL%og.jpg",
+        "telephone": "+40745360280",
+        "email": "pensiunea.baciu@yahoo.ro",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Str. Sportivilor nr. 19/B",
+          "addressLocality": "Toplița",
+          "addressRegion": "Harghita",
+          "addressCountry": "RO"
+        },
+        "geo": { "@type": "GeoCoordinates", "latitude": 46.90114, "longitude": 25.32829 },
+        "checkinTime": "14:00",
+        "checkoutTime": "11:00",
+        "numberOfRooms": 14,
+        "priceRange": "300 – 380 lei / noapte",
+        "petsAllowed": false,
+        "amenityFeature": [
+          { "@type": "LocationFeatureSpecification", "name": "Mic dejun inclus", "value": true },
+          { "@type": "LocationFeatureSpecification", "name": "WiFi gratuit", "value": true },
+          { "@type": "LocationFeatureSpecification", "name": "Parcare gratuită", "value": true },
+          { "@type": "LocationFeatureSpecification", "name": "Restaurant", "value": true }
+        ]
+      }
+    </script>
     <script>document.documentElement.classList.add('js')</script>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- primul ecran, desenat imediat, până se încarcă restul site-ului; React îl înlocuiește cu aceeași imagine -->
+      <section class="hero" aria-label="Pensiunea Baciu">
+        <div class="hero__media">
+          <div class="hero__open">
+            <div class="hero__slide on">
+              <img src="/img/vara-drona.webp" srcset="/img/vara-drona-s.webp 800w, /img/vara-drona.webp 1920w" sizes="100vw" width="1920" height="1078" alt="Pensiunea Baciu văzută de sus, vara, cu manejul și pădurea de brazi" fetchpriority="high" decoding="async" />
+            </div>
+          </div>
+          <div class="hero__scrim"></div>
+        </div>
+        <div class="hero__body wrap">
+          <div class="hero__text">
+            <h1 class="hero__title"><span class="hero__line"><span>Pensiunea</span></span><span class="hero__line"><span>Baciu</span></span></h1>
+            <p class="hero__sub" id="shell-sub">Cazare, bucătărie românească și aventură la 850 m, deasupra Topliței.</p>
+          </div>
+          <div class="hero__spacer"></div>
+        </div>
+      </section>
+    </div>
+    <script>
+      window.__t0 = performance.now()
+      try {
+        if (localStorage.getItem('baciu-lang') === 'en') {
+          document.documentElement.lang = 'en'
+          document.getElementById('shell-sub').textContent = 'Rooms, Romanian cooking and adventure at 850 m, above Toplița.'
+        }
+      } catch (e) {}
+    </script>
     <noscript><p style="padding:2rem;font-family:sans-serif">Pensiunea Baciu, Toplița · Telefon 0745 360 280 · pensiunea.baciu@yahoo.ro</p></noscript>
     <script type="module" src="/src/main.jsx"></script>
   </body>

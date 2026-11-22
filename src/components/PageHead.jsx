@@ -1,6 +1,4 @@
-import { motion, useScroll, useTransform } from 'motion/react'
-import { useRef } from 'react'
-import { Img } from '../lib.jsx'
+import { Img, useParallax } from '../lib.jsx'
 import { Link } from '../router.jsx'
 import { useData } from '../data/index.js'
 import { useT } from '../i18n.jsx'
@@ -12,14 +10,12 @@ export default function PageHead({ page }) {
   const { PAGE_HEAD } = useData()
   const h = PAGE_HEAD[page]
   const l = useT(L)
-  const ref = useRef(null)
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
-  const y = useTransform(scrollYProgress, [0, 1], ['0%', '22%'])
+  const [ref, media] = useParallax(22)
   return (
     <section className="phead" ref={ref} id="top" aria-labelledby="phead-h">
-      <motion.div className="phead__media" style={{ y }}>
+      <div className="phead__media" ref={media}>
         <Img name={h.img} alt={h.alt} sizes="100vw" eager />
-      </motion.div>
+      </div>
       <div className="phead__scrim" aria-hidden="true" />
       <div className="phead__body wrap">
         <nav className="phead__crumbs" aria-label="Fir">

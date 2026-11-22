@@ -280,6 +280,7 @@
   position: absolute;
   inset: 0;
   animation: heroOpen 1600ms var(--ease-in-out) both;
+  animation-delay: calc(0ms - var(--since, 0ms));
 }
 @keyframes heroOpen {
   from {
@@ -307,6 +308,9 @@
 }
 .hero__slide.on img {
   animation: kenburns 9000ms var(--ease-soft) both;
+}
+.hero__slide:first-child.on img {
+  animation-delay: calc(0ms - var(--since, 0ms));
 }
 @keyframes kenburns {
   from {
@@ -350,13 +354,13 @@
 }
 .hero__line > span {
   display: inline-block;
-  animation: lineUp 1300ms var(--ease-out) both;
+  animation: lineUp 1100ms var(--ease-out) both;
 }
 .hero__line:nth-child(1) > span {
-  animation-delay: 500ms;
+  animation-delay: calc(120ms - var(--since, 0ms));
 }
 .hero__line:nth-child(2) > span {
-  animation-delay: 640ms;
+  animation-delay: calc(240ms - var(--since, 0ms));
 }
 @keyframes lineUp {
   from {
@@ -371,7 +375,7 @@
   font-size: clamp(1.1rem, 1rem + 0.4vw, 1.35rem);
   max-width: 38ch;
   line-height: 1.45;
-  animation: fadeUp 1000ms var(--ease-out) 1000ms both;
+  animation: fadeUp 900ms var(--ease-out) calc(420ms - var(--since, 0ms)) both;
 }
 @keyframes fadeUp {
   from {
@@ -394,7 +398,7 @@
   background: var(--paper);
   color: var(--ink);
   border-radius: 999px;
-  animation: fadeUp 1000ms var(--ease-out) 1200ms both;
+  animation: fadeUp 900ms var(--ease-out) 560ms both;
 }
 .bookbar__f {
   display: flex;
@@ -683,7 +687,7 @@
   flex-direction: column;
   align-items: flex-end;
   gap: 10px;
-  animation: fadeUp 1000ms var(--ease-out) 1300ms both;
+  animation: fadeUp 900ms var(--ease-out) 680ms both;
 }
 .hero__cap {
   font-size: 0.9rem;

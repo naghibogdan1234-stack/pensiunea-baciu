@@ -62,7 +62,7 @@
   align-items: flex-end;
   gap: 4px;
   text-align: right;
-  animation: fadeUp 1000ms var(--ease-out) 1500ms both;
+  animation: fadeUp 900ms var(--ease-out) 760ms both;
 }
 .wchip__l {
   font-size: 0.8125rem;
@@ -807,48 +807,83 @@
   inset: 0;
   color: var(--on-forest);
 }
-.map__lines {
+.map__sketch {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
+}
+.map__contour path {
   fill: none;
-  stroke: rgba(201, 160, 99, 0.22);
+  stroke: rgba(201, 160, 99, 0.16);
   stroke-width: 1;
 }
-.map__pin {
-  position: absolute;
-  left: 58%;
-  top: 34%;
-  translate: -50% -100%;
-  color: var(--brass);
-  animation: pin 2.6s var(--ease-in-out) infinite;
+.map__river {
+  fill: none;
+  stroke: rgba(150, 186, 196, 0.55);
+  stroke-width: 3;
+  stroke-linecap: round;
 }
-.map__pin::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  bottom: -6px;
-  width: 22px;
-  height: 22px;
-  margin-left: -11px;
-  border-radius: 50%;
-  box-shadow: 0 0 0 1.5px rgba(201, 160, 99, 0.6); /* taste-skill-ignore */
-  animation: ring 2.6s ease-out infinite;
+.map__road {
+  fill: none;
+  stroke: var(--on-forest);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-dasharray: 420;
+  stroke-dashoffset: 420;
+  animation: road 2.4s var(--ease-in-out) 400ms forwards;
+}
+@keyframes road {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.map__slope {
+  stroke: rgba(243, 240, 234, 0.5);
+  stroke-width: 6;
+  stroke-linecap: round;
+}
+.map__dot {
+  fill: var(--on-forest);
+}
+.map__lbl {
+  fill: var(--on-forest-muted);
+  font-family: var(--f-sans);
+  font-size: 12px;
+}
+.map__lbl--town {
+  fill: var(--on-forest);
+  font-family: var(--f-serif);
+  font-size: 18px;
+}
+.map__lbl--river {
+  fill: rgba(150, 186, 196, 0.9);
+  font-style: italic;
+}
+.map__lbl--here {
+  fill: var(--brass);
+  font-family: var(--f-serif);
+  font-size: 17px;
+}
+.map__lbl--alt {
+  fill: var(--on-forest-muted);
+}
+.map__note {
+  fill: rgba(243, 240, 234, 0.4);
+  font-family: var(--f-sans);
+  font-size: 10px;
+}
+.map__pinpath {
+  fill: var(--brass);
+}
+.map__spin {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: pin 2.6s var(--ease-in-out) infinite;
 }
 @keyframes pin {
   50% {
     transform: translateY(-6px);
-  }
-}
-@keyframes ring {
-  from {
-    transform: scale(0.4);
-    opacity: 1;
-  }
-  to {
-    transform: scale(2.2);
-    opacity: 0;
   }
 }
 .map__msg {
@@ -924,6 +959,29 @@
 }
 .lb__fig figcaption strong {
   font-weight: 600;
+}
+
+/* recenzii: autorul imediat sub citat */
+.quote {
+  justify-content: flex-start;
+}
+.marquee__set {
+  align-items: flex-start;
+}
+/* toate întrebările */
+.faq__all {
+  padding-top: 26px;
+}
+.faq__all .link {
+  font-size: 1.05rem;
+}
+/* titlul tarifelor */
+.tariffs__toggle {
+  line-height: 1.2;
+}
+/* după „Despre”, camerele nu mai adaugă încă un spațiu mare */
+.about + .rooms .rooms__intro {
+  padding-top: calc(var(--section) * 0.45);
 }
 
 /* activități fără butoane */
@@ -1006,8 +1064,8 @@
   .marquee__track,
   .sky__sun,
   .sky__drops,
-  .map__pin,
-  .map__pin::after,
+  .map__spin,
+  .map__road,
   .phead__media img {
     animation: none;
   }
@@ -1016,19 +1074,116 @@
   }
 }
 
-/* pe telefon, în bară rămâne doar butonul pentru cealaltă limbă */
+/* pe telefon, limba stă lângă butonul de meniu: doar butonul pentru cealaltă limbă */
+.nav__start .lang {
+  display: none;
+}
 @media (max-width: 760px) {
   .nav__end .lang {
-    display: inline-flex;
-    box-shadow: none; /* taste-skill-ignore */
-    margin-right: 0;
-  }
-  .nav__end .lang button.on {
     display: none;
   }
-  .nav__end .lang button {
+  .nav__start {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .nav__start .lang {
+    display: inline-flex;
+    box-shadow: none; /* taste-skill-ignore */
+    padding: 0;
+  }
+  .nav__start .lang button.on {
+    display: none;
+  }
+  .nav__start .lang button {
     opacity: 1;
-    min-width: 40px;
-    height: 40px;
+    min-width: 44px;
+    height: 44px;
+    font-size: 0.875rem;
+  }
+  .nav--open .nav__start .lang {
+    display: none;
+  }
+  .resto__events .shutter {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+  }
+  /* bannerul de cookie-uri, mic, ca să nu acopere numele pensiunii */
+  .cookie {
+    padding: 16px 16px 14px;
+    gap: 10px;
+  }
+  .cookie__t {
+    display: none;
+  }
+  .cookie__p {
+    font-size: 0.875rem;
+    line-height: 1.45;
+  }
+  .cookie__btns .btn {
+    min-height: 44px;
+    font-size: 0.875rem;
+  }
+}
+
+/* locul cărții cât timp se încarcă */
+.menu--wait {
+  min-height: 100svh;
+  background: var(--forest);
+}
+
+/* primul ecran din index.html: ține locul barei de rezervare, ca titlul să nu sară când pornește site-ul */
+.hero__spacer {
+  grid-column: 1;
+  height: 68px;
+}
+@media (max-width: 900px) {
+  .hero__spacer {
+    height: 22px;
+  }
+}
+@media (min-width: 761px) and (max-width: 900px) {
+  .hero__spacer {
+    height: 55px;
+  }
+}
+
+.cookie__short {
+  display: none;
+}
+@media (max-width: 760px) {
+  .cookie__long {
+    display: none;
+  }
+  .cookie__short {
+    display: inline;
+  }
+  .cookie__btns {
+    gap: 6px;
+  }
+}
+
+/* harta oprită, pe ecrane înguste: desenul sus, mesajul dedesubt (nu peste desen) */
+@media (max-width: 980px) {
+  .map {
+    aspect-ratio: auto;
+    max-height: none;
+  }
+  .map__off {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  .map__sketch {
+    position: relative;
+    height: clamp(260px, 62vw, 420px);
+  }
+  .map__msg {
+    position: relative;
+    inset: auto;
+    padding-top: 4px;
+  }
+  .map:has(iframe) {
+    aspect-ratio: 4 / 5;
   }
 }

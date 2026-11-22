@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, lazy, Suspense } from 'react'
 import Lenis from 'lenis'
 import { scrollToId, openBooking, takePendingScroll, Img } from './lib.jsx'
 import { LangProvider, useT, useLang } from './i18n.jsx'
@@ -11,7 +11,6 @@ import About from './components/About.jsx'
 import Rooms from './components/Rooms.jsx'
 import Offers from './components/Offers.jsx'
 import Restaurant from './components/Restaurant.jsx'
-import MenuBook from './components/MenuBook.jsx'
 import Activities from './components/Activities.jsx'
 import Reviews from './components/Reviews.jsx'
 import Gallery from './components/Gallery.jsx'
@@ -22,6 +21,21 @@ import Booking from './components/Booking.jsx'
 import PageHead from './components/PageHead.jsx'
 import Icon from './components/Icon.jsx'
 import { CONTACT } from './data/content.js'
+
+// cartea-meniu (cu biblioteca de răsfoit) se încarcă separat, ca prima pagină să apară mai repede
+const loadBook = () => import('./components/MenuBook.jsx')
+const LazyBook = lazy(loadBook)
+function MenuBook() {
+  useEffect(() => {
+    const t = setTimeout(loadBook, 1500)
+    return () => clearTimeout(t)
+  }, [])
+  return (
+    <Suspense fallback={<section id="meniu" className="menu menu--wait" aria-hidden="true" />}>
+      <LazyBook />
+    </Suspense>
+  )
+}
 
 const L = {
   ro: { call: 'Sună', book: 'Rezervă', skip: 'Sari la conținut', next: 'Mai departe', quick: 'Acțiuni rapide' },
@@ -78,7 +92,7 @@ function Home() {
       <Activities />
       <Reviews />
       <Gallery />
-      <Faq />
+      <Faq limit={5} />
       <Visit />
     </>
   )

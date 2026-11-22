@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://naghibogdan1234-stack.github.io/pensiunea-baciu/sitemap.xml

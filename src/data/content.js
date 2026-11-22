@@ -364,7 +364,7 @@ export const OFFERS = [
     title: 'Stai mai mult, plătești mai puțin',
     big: '−12%',
     text: 'Reducerea se aplică automat la toată cazarea: 6% la 3 nopți, 9% la 4 nopți și 12% de la 5 nopți în sus.',
-    img: 'terasa-vedere',
+    img: 'camera-tripla-2',
     cta: ['book', 'Alege perioada', 'Cazare'],
   },
   {
@@ -382,7 +382,7 @@ export const OFFERS = [
     title: 'Plătești cu cardul de vacanță',
     big: '',
     text: 'Primim carduri de vacanță Pluxee (Sodexo), Up și Edenred, dar și numerar, card bancar sau transfer.',
-    img: 'restaurant-mese',
+    img: 'partie-soare',
     cta: ['call', 'Întreabă la telefon'],
   },
   {
@@ -391,7 +391,7 @@ export const OFFERS = [
     title: 'Nunți, botezuri și mese festive',
     big: '',
     text: 'Sala de evenimente are vedere spre manej și munți. Vă propunem un meniu standard sau facem unul împreună.',
-    img: 'sala-evenimente',
+    img: 'masa-festiva',
     cta: ['book', 'Cere o ofertă', 'Eveniment'],
   },
 ]
