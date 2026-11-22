@@ -45,10 +45,11 @@ function MobileBar() {
 
 // la capătul fiecărei pagini separate: următoarea pagină, cu poza ei
 function NextPage({ page }) {
-  const { LINKS } = useData()
+  const { LINKS, PAGE_HEAD } = useData()
   const l = useT(L)
   const i = ROUTES.indexOf(page)
-  const [id, label, img, line] = LINKS[(i + 1) % LINKS.length]
+  const [id, label, , line] = LINKS[(i + 1) % LINKS.length]
+  const img = PAGE_HEAD[id].img // poza mare a paginii următoare
   return (
     <Link to={id} className="nextp">
       <span className="nextp__pic" aria-hidden="true">

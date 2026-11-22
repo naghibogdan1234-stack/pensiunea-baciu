@@ -173,7 +173,7 @@ const HEAD = {
   activitati: {
     title: 'Activities',
     lead: 'Horses and the coaster in summer, slopes and night skiing in winter. All a few steps from your room.',
-    alt: 'Skiers on the slope, with snowy mountains in the distance',
+    alt: 'Two riders in the guesthouse arena, with fir trees and a clear sky',
   },
   galerie: {
     title: 'Gallery',

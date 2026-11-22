@@ -239,8 +239,8 @@ export const PAGE_HEAD = {
   activitati: {
     title: 'Activități',
     lead: 'Cai și bob vara, pârtie și schi seara iarna. Toate la câțiva pași de cameră.',
-    img: 'partie-vedere',
-    alt: 'Schiori pe pârtie, cu munți înzăpeziți în depărtare',
+    img: 'manej',
+    alt: 'Doi călăreți în manejul pensiunii, cu brazi și cer senin',
   },
   galerie: {
     title: 'Galerie',
