@@ -1,0 +1,387 @@
+/* ================= Culori, litere, ritm ================= */
+:root {
+  --paper: #f7f4ef;
+  --paper-2: #ede8e0;
+  --ink: #1c2420;
+  --muted: #59625d;
+  --forest: #17271e;
+  --forest-2: #20352a;
+  --on-forest: #f3f0ea;
+  --on-forest-muted: #b9c2ba;
+  --brass: #c9a063;
+  --brass-2: #d8b47c;
+  --accent: #24503a;
+  --accent-2: #1b4130;
+  --book-paper: #f8f3ea;
+  --book-ink: #2a221b;
+
+  --f-serif: 'EB Garamond', Garamond, 'Times New Roman', serif;
+  --f-sans: 'DM Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  --m: clamp(1.25rem, 5vw, 5rem);
+  --gap: clamp(1rem, 2vw, 2rem);
+  --section: clamp(5.5rem, 11vw, 10rem);
+  --r: 6px;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.76, 0, 0.24, 1);
+  --ease-soft: cubic-bezier(0.33, 1, 0.68, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+html.locked {
+  overflow: hidden;
+}
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--f-sans);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  font-weight: 400;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+h1,
+h2,
+h3,
+h4,
+p,
+figure,
+ul,
+ol,
+dl,
+dd,
+pre {
+  margin: 0;
+}
+ul,
+ol {
+  padding: 0;
+  list-style: none;
+}
+a {
+  color: inherit;
+}
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+button {
+  cursor: pointer;
+  background: none;
+  border: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+::selection {
+  background: var(--accent);
+  color: #fff;
+}
+:focus-visible {
+  outline: 2px solid var(--brass);
+  outline-offset: 3px;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* ================= Tipografie ================= */
+.h2 {
+  font-family: var(--f-serif);
+  font-weight: 400;
+  font-size: clamp(2.5rem, 1.55rem + 3.4vw, 4.75rem);
+  line-height: 1.02;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+.h3 {
+  font-family: var(--f-serif);
+  font-weight: 500;
+  font-size: clamp(1.65rem, 1.3rem + 1vw, 2.25rem);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+.lead {
+  font-size: clamp(1.125rem, 1.04rem + 0.35vw, 1.3rem);
+  line-height: 1.55;
+  max-width: 44ch;
+}
+.small {
+  font-size: 0.9rem;
+}
+.muted {
+  color: var(--muted);
+}
+.num {
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.cap {
+  margin-top: 12px;
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+/* ================= Butoane și linkuri ================= */
+.btn {
+  --bg: var(--accent);
+  --fg: #fff;
+  --bd: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55em;
+  min-height: 50px;
+  padding: 0.65em 1.5em;
+  border-radius: 999px;
+  background: var(--bg);
+  color: var(--fg);
+  box-shadow: inset 0 0 0 1.5px var(--bd); /* taste-skill-ignore — contur de buton, nu umbră */
+  font-family: var(--f-sans);
+  font-weight: 500;
+  font-size: 0.97rem;
+  letter-spacing: 0.005em;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: transform 140ms var(--ease-out), background-color 200ms ease, color 200ms ease, box-shadow 200ms ease;
+}
+.btn:active {
+  transform: scale(0.97);
+}
+.btn .ico {
+  transition: transform 240ms var(--ease-out);
+}
+.btn--line {
+  --bg: transparent;
+  --fg: var(--ink);
+  --bd: color-mix(in srgb, var(--ink) 28%, transparent);
+}
+.btn--brass {
+  --bg: var(--brass);
+  --fg: #1b1a14;
+}
+.btn--line-light {
+  --bg: transparent;
+  --fg: var(--on-forest);
+  --bd: rgba(243, 240, 234, 0.4);
+}
+@media (hover: hover) and (pointer: fine) {
+  .btn:hover {
+    --bg: var(--accent-2);
+  }
+  .btn:hover .ico:last-child {
+    transform: translateX(3px);
+  }
+  .btn--line:hover {
+    --bg: var(--ink);
+    --fg: var(--paper);
+    --bd: var(--ink);
+  }
+  .btn--brass:hover {
+    --bg: var(--brass-2);
+  }
+  .btn--line-light:hover {
+    --bg: var(--on-forest);
+    --fg: var(--forest);
+    --bd: var(--on-forest);
+  }
+}
+.link {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+  text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
+  transition: text-decoration-color 180ms ease, color 180ms ease;
+  font-size: inherit;
+}
+.link--strong {
+  font-weight: 500;
+  text-decoration-color: currentColor;
+}
+@media (hover: hover) and (pointer: fine) {
+  .link:hover {
+    text-decoration-color: currentColor;
+  }
+}
+.x {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 46px;
+  height: 46px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: var(--paper-2);
+  color: var(--ink);
+  transition: transform 140ms var(--ease-out), background-color 180ms ease;
+}
+.x--static {
+  position: static;
+  flex: none;
+}
+.x:active {
+  transform: scale(0.94);
+}
+@media (hover: hover) and (pointer: fine) {
+  .x:hover {
+    background: color-mix(in srgb, var(--paper-2) 80%, var(--ink) 12%);
+  }
+}
+
+/* comutator (pat suplimentar, cookie-uri) */
+.toggle {
+  flex: none;
+  position: relative;
+  width: 48px;
+  height: 28px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--muted) 45%, transparent);
+  transition: background-color 220ms ease;
+}
+.toggle::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 260ms var(--ease-out);
+}
+input:checked ~ .toggle {
+  background: var(--accent);
+}
+input:checked ~ .toggle::after {
+  transform: translateX(20px);
+}
+input:focus-visible ~ .toggle {
+  outline: 2px solid var(--brass);
+  outline-offset: 3px;
+}
+
+/* ================= Apariții ================= */
+.js .rv {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 900ms var(--ease-out), transform 1000ms var(--ease-out);
+  transition-delay: calc(var(--i, 0) * 90ms);
+}
+.js .rv.is-in {
+  opacity: 1;
+  transform: none;
+}
+.mask__w {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  padding-bottom: 0.1em;
+  margin-bottom: -0.1em;
+}
+.mask__w > span {
+  display: inline-block;
+}
+.js .mask__w > span {
+  transform: translateY(105%);
+  transition: transform 1100ms var(--ease-out);
+  transition-delay: var(--d);
+}
+.js .mask.is-in .mask__w > span {
+  transform: none;
+}
+
+.shutter {
+  position: relative;
+}
+.shutter .sh {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: var(--paper-2);
+  border-radius: var(--r);
+}
+.shutter img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.js .shutter .sh {
+  clip-path: inset(0 0 100% 0 round var(--r));
+  transition: clip-path 1200ms var(--ease-in-out);
+}
+.js .shutter.from-left .sh {
+  clip-path: inset(0 100% 0 0 round var(--r));
+}
+.js .shutter.from-right .sh {
+  clip-path: inset(0 0 0 100% round var(--r));
+}
+.js .shutter img {
+  transform: scale(1.14);
+  transition: transform 1800ms var(--ease-soft);
+}
+.js .shutter.is-in .sh {
+  clip-path: inset(0 0 0 0 round var(--r));
+}
+.js .shutter.is-in img {
+  transform: none;
+}
+
+/* ================= Cadru ================= */
+.wrap {
+  padding-inline: var(--m);
+}
+.section {
+  padding-block: var(--section);
+}
+section {
+  position: relative;
+}
+.skip {
+  position: fixed;
+  left: 12px;
+  top: -80px;
+  z-index: 400;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 12px 18px;
+  border-radius: 999px;
+  text-decoration: none;
+}
+.skip:focus {
+  top: 12px;
+}

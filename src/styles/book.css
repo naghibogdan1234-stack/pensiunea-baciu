@@ -1,0 +1,407 @@
+/* ================= Secțiunea meniului ================= */
+.menu {
+  background: var(--forest);
+  color: var(--on-forest);
+  padding-top: var(--section);
+  padding-bottom: clamp(3rem, 6vw, 5rem);
+}
+.menu__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 18px 40px;
+}
+.menu__lead {
+  max-width: 40ch;
+  color: var(--on-forest-muted);
+}
+.menu__stage {
+  position: relative;
+  height: min(100svh, 1000px);
+  height: round(down, min(100svh, 1000px), 2px);
+  min-height: 640px;
+  margin-top: clamp(2.5rem, 5vw, 4rem);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.menu__table img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.menu__book {
+  position: relative;
+  flex: none;
+  transition: transform 900ms var(--ease-in-out);
+}
+.menu__shadow {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-radius: 3px;
+  box-shadow: 0 40px 70px -18px rgba(0, 0, 0, 0.62), 0 10px 22px rgba(0, 0, 0, 0.32); /* taste-skill-ignore */
+  transition: left 900ms var(--ease-in-out), width 900ms var(--ease-in-out);
+}
+.menu__holder {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* biblioteca de răsfoit (page-flip) */
+.bookroot.stf__parent {
+  position: relative;
+  display: block;
+  transform: translateZ(0);
+  touch-action: pan-y;
+}
+.bookroot .stf__wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.bookroot .stf__block {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  perspective: 2200px;
+}
+.bookroot .stf__item {
+  display: none;
+  position: absolute;
+  transform-style: preserve-3d;
+}
+.bookroot .stf__outerShadow,
+.bookroot .stf__innerShadow,
+.bookroot .stf__hardShadow,
+.bookroot .stf__hardInnerShadow {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+.leafpage {
+  overflow: hidden;
+  cursor: grab;
+}
+.leafpage:active {
+  cursor: grabbing;
+}
+
+/* ---------- conținutul paginilor (mărimile urmează lățimea paginii, deci textul rămâne clar la orice mărime) ---------- */
+.pg {
+  position: absolute;
+  inset: 0;
+  container-type: size;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.pg--paper {
+  background: var(--book-paper);
+  color: var(--book-ink);
+  font-family: var(--f-serif);
+}
+.leafpage.--left .pg--paper {
+  box-shadow: inset -14px 0 18px -14px rgba(70, 45, 20, 0.28); /* taste-skill-ignore */
+}
+.leafpage.--right .pg--paper {
+  box-shadow: inset 14px 0 18px -14px rgba(70, 45, 20, 0.28); /* taste-skill-ignore */
+}
+.pg__in {
+  position: absolute;
+  inset: 8.42cqw 7.9cqw 11.05cqw;
+  display: flex;
+  flex-direction: column;
+  gap: 3.16cqw;
+  overflow: hidden;
+}
+.pg__in--end {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 4.2cqw;
+}
+.pg__chapter {
+  font-size: 8.16cqw;
+  font-style: italic;
+  line-height: 1.02;
+}
+.pg__chapter--big {
+  font-size: 11.6cqw;
+}
+.pg__h {
+  font-size: 4.74cqw;
+  font-weight: 600;
+  line-height: 1.1;
+  color: #3a2a1f;
+}
+.ms {
+  display: flex;
+  flex-direction: column;
+  gap: 2.1cqw;
+}
+.ms + .ms {
+  margin-top: 2.1cqw;
+}
+.ms ul {
+  display: flex;
+  flex-direction: column;
+  gap: 1.32cqw;
+}
+.ms ul.ms__cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 5.8cqw;
+  row-gap: 1.32cqw;
+}
+.mi__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 3.68cqw;
+  font-size: 4.08cqw;
+  line-height: 1.2;
+}
+.mi__name {
+  font-weight: 500;
+}
+.mi__price {
+  flex: none;
+  font-weight: 600;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.mi__sub {
+  font-size: 3.55cqw;
+  line-height: 1.25;
+  color: #6c5b4e;
+  margin-top: 0.3cqw;
+}
+.mi__g {
+  color: #8a7666;
+}
+.mi__g--in {
+  font-size: 3.55cqw;
+  font-weight: 400;
+  white-space: nowrap;
+}
+.pg__text {
+  font-size: 4.21cqw;
+  line-height: 1.4;
+}
+.pg__text--small {
+  font-size: 3.68cqw;
+  color: #6c5b4e;
+  max-width: 26ch;
+}
+.pg__phone {
+  font-size: 6.84cqw;
+  font-weight: 600;
+  font-variant-numeric: lining-nums;
+}
+.toc {
+  display: flex;
+  flex-direction: column;
+}
+.toc button {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  padding: 0.55cqw 0;
+  font-family: var(--f-serif);
+  font-size: 4.21cqw;
+  color: var(--book-ink);
+  text-align: left;
+  cursor: pointer;
+  transition: color 180ms ease;
+}
+.toc button * {
+  pointer-events: none;
+}
+@media (hover: hover) and (pointer: fine) {
+  .toc button:hover {
+    color: var(--accent);
+  }
+}
+.pg__no {
+  position: absolute;
+  bottom: 3.7cqw;
+  right: 7.9cqw;
+  font-family: var(--f-serif);
+  font-size: 3.42cqw;
+  color: #9a8676;
+}
+.leafpage.--left .pg__no {
+  right: auto;
+  left: 7.9cqw;
+}
+
+/* coperta din piele */
+.pg--cover {
+  background: #3a2419 url('../assets/piele.webp') center / cover;
+  color: #dcc290;
+  font-family: var(--f-serif);
+}
+.cover__in {
+  position: absolute;
+  inset: 4.2cqw;
+  border: 1.5px dashed rgba(220, 194, 144, 0.5);
+  border-radius: 1cqw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.cover__small {
+  font-size: 5.8cqw;
+  letter-spacing: 0.04em;
+}
+.cover__name {
+  font-size: 24.2cqw;
+  line-height: 0.92;
+  font-weight: 500;
+}
+.cover__mark {
+  width: 2.4cqw;
+  height: 2.4cqw;
+  background: #dcc290;
+  transform: rotate(45deg);
+  margin: 6.8cqw 0 4.7cqw;
+}
+.cover__menu {
+  font-size: 7.9cqw;
+  font-style: italic;
+}
+.cover__place {
+  position: absolute;
+  bottom: 7.9cqw;
+  left: 0;
+  right: 0;
+  font-size: 3.95cqw;
+  letter-spacing: 0.03em;
+}
+.cover__place--static {
+  position: static;
+}
+
+/* ---------- bara de sub carte ---------- */
+.menu__bar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  margin-top: 26px;
+}
+.pbtn--stage {
+  position: absolute;
+  z-index: 5;
+  top: 50%;
+  translate: 0 -50%;
+  width: 58px;
+  height: 58px;
+  background: rgba(247, 244, 239, 0.92);
+  color: var(--ink);
+  box-shadow: 0 10px 26px -10px rgba(0, 0, 0, 0.5); /* taste-skill-ignore */
+}
+.pbtn--stage:active {
+  transform: scale(0.94);
+}
+.pbtn--l {
+  left: var(--m);
+}
+.pbtn--r {
+  right: var(--m);
+}
+.pbtn--stage:disabled {
+  opacity: 0;
+  pointer-events: none;
+}
+@media (hover: hover) and (pointer: fine) {
+  .pbtn--stage:not(:disabled):hover {
+    background: #fff;
+  }
+}
+.menu__where {
+  position: absolute;
+  z-index: 5;
+  left: 50%;
+  bottom: 18px;
+  translate: -50% 0;
+  padding: 7px 16px;
+  border-radius: 999px;
+  background: rgba(23, 39, 30, 0.82);
+  color: var(--on-forest);
+  font-size: 0.92rem;
+  white-space: nowrap;
+}
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  max-width: 1100px;
+}
+.menu .chip {
+  background: rgba(243, 240, 234, 0.08);
+  color: var(--on-forest);
+}
+.menu .chip.on {
+  background: var(--on-forest);
+  color: var(--forest);
+}
+@media (hover: hover) and (pointer: fine) {
+  .menu .chip:not(.on):hover {
+    background: rgba(243, 240, 234, 0.18);
+  }
+}
+.menu__listbtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 6px;
+  color: var(--on-forest);
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+  text-decoration-color: rgba(243, 240, 234, 0.4);
+}
+@media (hover: hover) and (pointer: fine) {
+  .menu__listbtn:hover {
+    text-decoration-color: currentColor;
+  }
+}
+
+@media (max-width: 819px) {
+  .pbtn--stage {
+    top: auto;
+    bottom: 12px;
+    translate: none;
+    width: 50px;
+    height: 50px;
+  }
+  .menu__where {
+    bottom: 22px;
+  }
+  .menu__stage {
+    height: 86svh;
+    height: round(down, 86svh, 2px);
+    min-height: 580px;
+    padding-bottom: 66px;
+  }
+  .chips {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow-x: auto;
+    width: calc(100% + 2 * var(--m));
+    margin-inline: calc(-1 * var(--m));
+    padding-inline: var(--m);
+    scrollbar-width: none;
+  }
+  .chips::-webkit-scrollbar {
+    display: none;
+  }
+}
