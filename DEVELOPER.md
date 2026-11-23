@@ -92,7 +92,6 @@ src/
       PageHead.jsx         capul paginilor separate
       NextPage.jsx         „Mai departe” spre pagina următoare
       Curtain.jsx          cortina dintre pagini
-      DragCursor.jsx       cercul „Trage” peste galerie
     sections/              secțiunile, în ordinea de pe prima pagină
       Hero.jsx             primul ecran: pozele (cu swipe pe telefon) și bara de rezervare rapidă
       About.jsx            prezentarea, cifrele, vremea
@@ -103,7 +102,7 @@ src/
       MenuBook.jsx         meniul ca o carte de răsfoit (și ca listă)
       Activities.jsx       activități vara / iarna și tarifele
       Reviews.jsx          note și recenzii (cu inițialele sau poza autorului)
-      Gallery.jsx          galeria și poza mărită
+      Gallery.jsx          galeria (grilă) și poza mărită
       Faq.jsx              întrebări frecvente
       Visit.jsx            contact, program, hartă
     booking/               fereastra de rezervare
@@ -207,7 +206,7 @@ limba ținută în `CUR` pentru formatare (`i18n.jsx`).
 | check-in, check-out, carduri de vacanță | `STAY` |
 | oferte, recenzii și note, întrebări frecvente | `OFFERS`, `RATINGS` / `SUBSCORES` / `REVIEWS`, `FAQ` |
 | poza autorului unei recenzii (doar cu acordul lui) | `photo: 'nume-poza'` la recenzie, în `REVIEWS`; fără ea apar inițialele |
-| pozele de pe prima pagină și din galerie | `SLIDES`, `PHOTOS` (+ așezarea în `LAYOUT`, în `Gallery.jsx`) |
+| pozele de pe prima pagină și din galerie | `SLIDES`, `PHOTOS` (+ pozele mai mari în `TILE`, în `Gallery.jsx`) |
 | paginile din meniu și capul fiecăreia | `LINKS`, `PAGE_HEAD` |
 | meniul restaurantului | `data/menu.js` (+ `menu.en.js`) |
 | politica de confidențialitate, cookie-uri, termeni | `components/legal/pages-ro.jsx` și `pages-en.jsx` |
@@ -244,8 +243,9 @@ Un obiect nou în `FAQ` (`content.js`) cu `q`, `a` și `pages` (paginile pe care
 poziție**: întrebările se potrivesc după ordine.
 
 ### …o poză în galerie
-Un rând nou în `PHOTOS` (`content.js`), traducerea în `PHOTO_TEXT` (`content.en.js`) și numele pozei
-într-o coloană din `LAYOUT` (`Gallery.jsx`). Fără ultimul pas, poza apare doar la răsfoit, nu și în rând.
+Un rând nou în `PHOTOS` (`content.js`), în locul în care vrei să apară, și traducerea în `PHOTO_TEXT`
+(`content.en.js`). Dacă vrei ca poza să fie mai mare în grilă, adaug-o în `TILE` din `Gallery.jsx`
+(`big`, `tall` sau `wide`). Verifică apoi grila pe calculator și pe telefon, să nu rămână goluri.
 
 ### …o activitate
 Un obiect nou în `ACTIVITIES.vara` sau `ACTIVITIES.iarna`, cu `id`, `name`, `tag`, `img`, `alt`, `text`,

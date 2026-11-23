@@ -3,7 +3,7 @@
 //   App            pornește scroll-ul lin (Lenis) și pune „furnizorii” (limba, pagina, cookie-urile)
 //   └─ Pages       bara de sus + pagina curentă + subsolul + bara de jos de pe telefon
 //   └─ ferestrele globale, montate o singură dată și deschise prin evenimente (vezi events.js):
-//      Curtain, DragCursor, Booking, CookieBanner, CookieSettings, LegalPages
+//      Curtain, Booking, CookieBanner, CookieSettings, LegalPages
 //
 // Ce secțiuni are fiecare pagină se hotărăște în pages.jsx.
 import { useEffect } from 'react'
@@ -21,7 +21,6 @@ import MobileBar from './components/layout/MobileBar.jsx'
 import PageHead from './components/layout/PageHead.jsx'
 import NextPage from './components/layout/NextPage.jsx'
 import Curtain from './components/layout/Curtain.jsx'
-import DragCursor from './components/layout/DragCursor.jsx'
 import Booking from './components/booking/Booking.jsx'
 
 const TEXT = {
@@ -103,7 +102,6 @@ export default function App() {
         <ConsentProvider>
           <Pages />
           <Curtain />
-          <DragCursor />
           <Booking />
           <CookieBanner />
           <CookieSettings />

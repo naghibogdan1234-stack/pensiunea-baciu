@@ -300,7 +300,7 @@ export const SLIDES = [
 /* ---------- Galerie ---------- */
 // title = titlul scurt de pe poză; desc = descrierea (și textul alternativ)
 // pos = încadrarea, când subiectul nu e la mijlocul pozei (object-position)
-// Cum se așază pozele în rândul galeriei se hotărăște în Gallery.jsx (LAYOUT).
+// Ordinea de aici e ordinea din galerie; care poze sunt mai mari se hotărăște în Gallery.jsx (TILE).
 export const PHOTOS = [
   { img: 'panorama', title: 'Vara, de sus', desc: 'Pajiștile și pădurile din jurul Topliței, văzute de deasupra pensiunii' },
   { img: 'terasa-apus', title: 'Terasa, la apus', desc: 'Platou cu mezeluri și brânzeturi pe terasă, cu dealurile în lumina de seară' },
@@ -308,10 +308,10 @@ export const PHOTOS = [
   { img: 'iarna-drona', title: 'Iarna, de sus', desc: 'Pista de bob și câmpul înzăpezit din jurul pensiunii' },
   { img: 'restaurant-geamuri', title: 'Colțul cu ferestre', desc: 'Mesele de lângă ferestrele mari ale restaurantului, cu vedere spre curte' },
   { img: 'masa-festiva', title: 'Sala de evenimente', desc: 'Masă rotundă aranjată pentru o nuntă sau un botez, lângă fereastra cu brazi' },
+  { img: 'caprioara', title: 'Vecini de pădure', desc: 'Două căprioare pe pajiștea de lângă pârtie, vara', pos: '70% 55%' },
   { img: 'partie-vedere', title: 'Pârtia', desc: 'Schiori pe pârtie, cu Munții Călimani înzăpeziți în depărtare' },
   { img: 'ponei', title: 'Poneiul', desc: 'Cel mai mic călăreț, pe ponei, condus de instructor prin manej' },
   { img: 'camera-twin', title: 'Paturi separate', desc: 'Camera dublă cu două paturi de o persoană, sub fereastra din acoperiș' },
-  { img: 'caprioara', title: 'Vecini de pădure', desc: 'Două căprioare pe pajiștea de lângă pârtie, vara', pos: '70% 55%' },
   { img: 'calarie-copil', title: 'Primii pași în șa', desc: 'Un copil urcat pe cal, ajutat de instructor' },
   { img: 'terasa', title: 'Terasa de lemn', desc: 'Mesele lungi de pe terasă, cu vedere spre munți' },
 ]
