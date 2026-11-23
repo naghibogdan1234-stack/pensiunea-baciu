@@ -8,6 +8,8 @@
   overflow: hidden;
   background: var(--forest);
   color: #fff;
+  /* pe ecrane tactile: sus-jos derulează pagina, stânga-dreapta schimbă poza (Hero.jsx, useSwipeSlides) */
+  touch-action: pan-y pinch-zoom;
 }
 .hero__media {
   position: absolute;

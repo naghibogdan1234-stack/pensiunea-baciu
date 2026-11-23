@@ -1,4 +1,5 @@
 // Secțiunea restaurantului: text, program, locuri, trei poze și sala de evenimente.
+// Pe ecran lat, textul din stânga coboară odată cu pagina pe lângă poza înaltă (position: sticky, în CSS).
 // Butonul „Deschide meniul” coboară la meniul-carte (MenuBook.jsx), care vine imediat după.
 import { Reveal, MaskText, Shutter } from '../../lib/motion.jsx'
 import { scrollLink } from '../../lib/scroll.js'
@@ -86,13 +87,12 @@ export default function Restaurant() {
         </div>
       </div>
 
+      {/* sala și sala de evenimente: pozele una lângă alta, la aceeași înălțime; textele dedesubt */}
       <div className="resto__pair">
-        <div className="resto__hall">
-          <Shutter name="restaurant" alt={txt.altHall} sizes="(max-width: 760px) 100vw, 56vw" from="left" />
-          <p className="cap">{txt.capHall}</p>
-        </div>
+        <Shutter className="resto__hall" name="restaurant" alt={txt.altHall} sizes="(max-width: 760px) 100vw, 56vw" from="left" />
+        <Shutter className="resto__evpic" name="sala-evenimente" alt={txt.altEvents} sizes="(max-width: 760px) 100vw, 34vw" />
+        <p className="cap resto__hallcap">{txt.capHall}</p>
         <div className="resto__events">
-          <Shutter name="sala-evenimente" alt={txt.altEvents} sizes="(max-width: 760px) 70vw, 26vw" />
           <Reveal as="h3" className="h3">
             {txt.events}
           </Reveal>

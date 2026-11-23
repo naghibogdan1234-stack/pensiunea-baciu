@@ -1,4 +1,4 @@
-/* Caruselul cu camere și panoul lateral cu detaliile camerei.
+/* Camerele în trei coloane, banda „Bine de știut” și panoul lateral cu detaliile camerei.
    Componentele: components/sections/Rooms.jsx și RoomPanel.jsx */
 
 .rooms__intro {
@@ -34,34 +34,14 @@
 .rooms {
   padding-bottom: var(--section);
 }
-.rooms__track {
-  display: flex;
-  gap: 24px;
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  scroll-snap-type: x mandatory;
-  scroll-padding-inline: var(--m);
-  padding-inline: var(--m);
-  padding-bottom: 6px;
-  scrollbar-width: none;
-  cursor: grab;
-  user-select: none;
+.rooms__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(16px, 2vw, 28px);
 }
-.rooms__track::-webkit-scrollbar {
-  display: none;
-}
-.rooms__track.is-drag,
-.rooms__track.is-coast {
-  scroll-snap-type: none;
-  cursor: grabbing;
-}
-.rooms__track.is-drag .rcard__btn {
-  pointer-events: none;
-}
+/* min-width: 0 = cardul se poate îngusta cât coloana lui din grilă */
 .rcard {
-  flex: none;
-  width: min(40vw, 600px);
-  scroll-snap-align: start;
+  min-width: 0;
 }
 .rcard__btn {
   display: flex;
@@ -70,7 +50,7 @@
   width: 100%;
   text-align: left;
   color: inherit;
-  cursor: inherit;
+  cursor: pointer;
 }
 .rcard__pic {
   position: relative;
@@ -88,8 +68,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transform: scale(1.12);
-  will-change: transform;
+  transition: transform 900ms var(--ease-out);
 }
 .rcard__more {
   position: absolute;
@@ -110,6 +89,9 @@
 }
 
 @media (hover: hover) and (pointer: fine) {
+  .rcard__btn:hover .rcard__pic img {
+    transform: scale(1.04);
+  }
   .rcard__btn:hover .rcard__more,
   .rcard__btn:focus-visible .rcard__more {
     opacity: 1;
@@ -154,37 +136,39 @@
   font-size: 1.6rem;
   color: var(--ink);
 }
-.rcard--info {
-  width: min(30vw, 440px);
-  cursor: auto;
-  user-select: text;
-}
+/* „Bine de știut”: bandă verde sub camere */
 .rinfo {
-  aspect-ratio: 4 / 5;
-  max-height: 72svh;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 28px;
-  padding: clamp(26px, 2.6vw, 40px);
+  margin-top: clamp(28px, 3vw, 44px);
+  display: grid;
+  grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+  gap: 28px clamp(32px, 4vw, 72px);
+  align-items: start;
+  padding: clamp(28px, 3.4vw, 52px);
   border-radius: var(--r);
   background: var(--forest);
   color: var(--on-forest);
 }
+.rinfo__head {
+  display: grid;
+  gap: 26px;
+  justify-items: start;
+}
 .rinfo__h {
   font-family: var(--f-serif);
-  font-size: clamp(1.7rem, 1.3rem + 1vw, 2.4rem);
-  line-height: 1.1;
+  font-weight: 500;
+  font-size: clamp(1.9rem, 1.4rem + 1.2vw, 2.8rem);
+  line-height: 1.05;
 }
 .rinfo__list {
   display: grid;
-  gap: 18px;
-  font-size: 1rem;
-  line-height: 1.45;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 26px 40px;
+  font-size: 1.05rem;
+  line-height: 1.5;
 }
 .rinfo__list li {
   display: grid;
-  grid-template-columns: 22px 1fr;
+  grid-template-columns: 24px 1fr;
   gap: 14px;
 }
 .rinfo__list .ico {
@@ -192,55 +176,14 @@
   margin-top: 2px;
 }
 .rinfo__go {
-  align-self: flex-start;
   color: var(--on-forest);
   box-shadow: inset 0 0 0 1.5px rgba(243, 240, 234, 0.4); /* taste-skill-ignore */
 }
-.rooms__ctrl {
-  display: flex;
-  align-items: center;
-  gap: 32px;
-  margin-top: 36px;
-}
-.rooms__bar {
-  flex: 1;
-  height: 2px;
-  background: color-mix(in srgb, var(--ink) 12%, transparent);
-  overflow: hidden;
-}
-.rooms__bar span {
-  display: block;
-  height: 100%;
-  background: var(--ink);
-  transform-origin: left;
-  transition: transform 120ms linear;
-}
-.rooms__arrows {
-  display: flex;
-  gap: 10px;
-}
-.rarrow {
-  width: 52px;
-  height: 52px;
-  border-radius: 999px;
-  display: grid;
-  place-items: center;
-  color: var(--ink);
-  box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--ink) 22%, transparent); /* taste-skill-ignore */
-  transition: background-color 180ms ease, color 180ms ease, opacity 180ms ease, transform 140ms var(--ease-out);
-}
-.rarrow:active {
-  transform: scale(0.94);
-}
-.rarrow:disabled {
-  opacity: 0.3;
-  cursor: default;
-}
 
 @media (hover: hover) and (pointer: fine) {
-  .rarrow:not(:disabled):hover {
-    background: var(--ink);
-    color: var(--paper);
+  .rinfo__go:hover {
+    background: var(--paper);
+    color: var(--ink);
   }
 }
 
@@ -397,25 +340,31 @@
   margin-top: 6px;
 }
 
-@media (max-width: 760px) {
-  .rcard {
-    width: 82vw;
-  }
-  .rcard--info {
-    width: 82vw;
-  }
-  .rcard__pic,
+@media (max-width: 980px) {
   .rinfo {
-    max-height: 62svh;
+    grid-template-columns: 1fr;
   }
-  .rooms__track {
-    gap: 14px;
+  .rinfo__head {
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    width: 100%;
   }
-  .rooms__arrows {
-    display: none;
+}
+
+@media (max-width: 760px) {
+  .rooms__grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
   }
-  .rooms__ctrl {
-    margin-top: 24px;
+  .rcard__pic {
+    aspect-ratio: 4 / 3;
+  }
+  .rinfo__head {
+    grid-template-columns: 1fr;
+  }
+  .rinfo__list {
+    grid-template-columns: 1fr;
+    gap: 18px;
   }
 }
 
@@ -432,4 +381,15 @@
 /* după „Despre”, camerele nu mai adaugă încă un spațiu mare */
 .about + .rooms .rooms__intro {
   padding-top: calc(var(--section) * 0.45);
+}
+
+/* pe telefon, în „Bine de știut” butonul vine după listă */
+@media (max-width: 760px) {
+  .rinfo__head {
+    display: contents;
+  }
+  .rinfo__go {
+    order: 3;
+    justify-self: start;
+  }
 }

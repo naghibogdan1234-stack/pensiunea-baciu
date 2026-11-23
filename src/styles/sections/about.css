@@ -23,20 +23,17 @@
   grid-column: 1 / 9;
   position: relative;
 }
+.about__photo {
+  min-height: 440px;
+}
+/* pe ecran lat, poza ia înălțimea panoului verde de alături (rândul are înălțimea conținutului lui) */
 .about__photo .shutter {
-  aspect-ratio: 16 / 10;
+  height: 100%;
 }
 .about__note {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: min(360px, 46%);
-  padding: 22px 24px;
-  background: var(--paper);
-  border-radius: 0 0 0 var(--r);
-  font-size: 1rem;
-  line-height: 1.55;
-  z-index: 2;
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  max-width: 34ch;
 }
 .about__tile {
   grid-column: 9 / 13;
@@ -81,6 +78,14 @@
   }
   .about__photo {
     grid-column: 1 / -1;
+    min-height: 0;
+  }
+  .about__photo .shutter {
+    height: auto;
+    aspect-ratio: 16 / 10;
+  }
+  .about__note {
+    max-width: 60ch;
   }
   .about__tile {
     grid-column: 1 / -1;
@@ -91,12 +96,6 @@
 }
 
 @media (max-width: 760px) {
-  .about__note {
-    position: static;
-    width: auto;
-    padding: 18px 0 0;
-    background: none;
-  }
   .about__photo .shutter {
     aspect-ratio: 4 / 3;
   }

@@ -92,17 +92,17 @@ src/
       PageHead.jsx         capul paginilor separate
       NextPage.jsx         „Mai departe” spre pagina următoare
       Curtain.jsx          cortina dintre pagini
-      DragCursor.jsx       cercul „Trage” peste carusele
+      DragCursor.jsx       cercul „Trage” peste galerie
     sections/              secțiunile, în ordinea de pe prima pagină
-      Hero.jsx             primul ecran, cu bara de rezervare rapidă
+      Hero.jsx             primul ecran: pozele (cu swipe pe telefon) și bara de rezervare rapidă
       About.jsx            prezentarea, cifrele, vremea
-      Rooms.jsx            caruselul de camere
+      Rooms.jsx            camerele, în trei coloane, și banda „Bine de știut”
       RoomPanel.jsx        panoul cu detaliile unei camere
       Offers.jsx           oferte
       Restaurant.jsx       restaurantul
       MenuBook.jsx         meniul ca o carte de răsfoit (și ca listă)
       Activities.jsx       activități vara / iarna și tarifele
-      Reviews.jsx          note și recenzii
+      Reviews.jsx          note și recenzii (cu inițialele sau poza autorului)
       Gallery.jsx          galeria și poza mărită
       Faq.jsx              întrebări frecvente
       Visit.jsx            contact, program, hartă
@@ -206,6 +206,7 @@ limba ținută în `CUR` pentru formatare (`i18n.jsx`).
 | activități, tarife, program | `ACTIVITIES`, `TARIFFS`, `HOURS` |
 | check-in, check-out, carduri de vacanță | `STAY` |
 | oferte, recenzii și note, întrebări frecvente | `OFFERS`, `RATINGS` / `SUBSCORES` / `REVIEWS`, `FAQ` |
+| poza autorului unei recenzii (doar cu acordul lui) | `photo: 'nume-poza'` la recenzie, în `REVIEWS`; fără ea apar inițialele |
 | pozele de pe prima pagină și din galerie | `SLIDES`, `PHOTOS` (+ așezarea în `LAYOUT`, în `Gallery.jsx`) |
 | paginile din meniu și capul fiecăreia | `LINKS`, `PAGE_HEAD` |
 | meniul restaurantului | `data/menu.js` (+ `menu.en.js`) |

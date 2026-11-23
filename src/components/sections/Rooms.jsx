@@ -1,7 +1,6 @@
-// Camerele: un carusel orizontal cu cardurile camerelor și un card „Bine de știut”.
-// Pe calculator se trage cu mouse-ul (useDragScroll), pe telefon cu degetul; săgețile mută câte un card.
+// Camerele: cele trei tipuri, în trei coloane, și dedesubt banda verde „Bine de știut”.
 // Apăsarea pe o cameră deschide panoul cu detalii (RoomPanel.jsx). Datele: ROOMS, DISCOUNTS (data/content.js).
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 import { Img } from '../../lib/Img.jsx'
 import { Reveal, MaskText } from '../../lib/motion.jsx'
 import { openBooking } from '../../events.js'
@@ -28,8 +27,6 @@ const TEXT = {
     k3: 'Rezervarea se confirmă cu un avans de 50%',
     k4: 'Animalele de companie nu au acces în camere',
     check: 'Verifică datele libere',
-    prev: 'Camera anterioară',
-    next: 'Camera următoare',
   },
   en: {
     h: 'Warm rooms, breakfast included',
@@ -46,103 +43,22 @@ const TEXT = {
     k3: 'Bookings are confirmed with a 50% deposit',
     k4: 'Pets are not allowed in the rooms',
     check: 'Check availability',
-    prev: 'Previous room',
-    next: 'Next room',
   },
 }
 
-/**
- * Carusel tras cu mouse-ul (pe telefon merge derularea nativă cu degetul).
- * Tragerea pornește după 6 px, ca un click simplu să rămână click. După ce dai drumul, rândul mai
- * alunecă puțin (inerție), apoi CSS-ul (scroll-snap) așază cardul cel mai apropiat.
- * Întoarce un ref `moved`: true dacă ultima apăsare a fost tragere (atunci nu deschidem camera).
- */
-function useDragScroll(ref) {
-  const moved = useRef(false)
-  useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    let down = false
-    let x0 = 0
-    let s0 = 0
-    let last = 0
-    let lastT = 0
-    let v = 0
-    let raf = 0
-    const onDown = (e) => {
-      if (e.pointerType !== 'mouse' || e.button !== 0) return
-      cancelAnimationFrame(raf)
-      down = true
-      moved.current = false
-      x0 = e.clientX
-      s0 = el.scrollLeft
-      last = e.clientX
-      lastT = performance.now()
-      v = 0
-    }
-    const onMove = (e) => {
-      if (!down) return
-      const dx = e.clientX - x0
-      if (!moved.current && Math.abs(dx) > 6) {
-        moved.current = true
-        el.classList.add('is-drag')
-        el.setPointerCapture(e.pointerId)
-      }
-      if (!moved.current) return
-      el.scrollLeft = s0 - dx
-      const t = performance.now()
-      v = (e.clientX - last) / Math.max(1, t - lastT)
-      last = e.clientX
-      lastT = t
-    }
-    const onUp = () => {
-      if (!down) return
-      down = false
-      el.classList.remove('is-drag')
-      // inerție scurtă, apoi lăsăm scroll-snap să așeze cardul
-      let vel = -v * 16
-      const step = () => {
-        if (Math.abs(vel) < 0.6) {
-          el.classList.remove('is-coast')
-          return
-        }
-        el.scrollLeft += vel
-        vel *= 0.92
-        raf = requestAnimationFrame(step)
-      }
-      if (moved.current && Math.abs(vel) > 2) {
-        el.classList.add('is-coast')
-        raf = requestAnimationFrame(step)
-      }
-    }
-    el.addEventListener('pointerdown', onDown)
-    el.addEventListener('pointermove', onMove)
-    el.addEventListener('pointerup', onUp)
-    el.addEventListener('pointercancel', onUp)
-    return () => {
-      cancelAnimationFrame(raf)
-      el.removeEventListener('pointerdown', onDown)
-      el.removeEventListener('pointermove', onMove)
-      el.removeEventListener('pointerup', onUp)
-      el.removeEventListener('pointercancel', onUp)
-    }
-  }, [ref])
-  return moved
-}
-
-/** Cardul unei camere din carusel. */
-function RoomCard({ room, i, onOpen, dragged }) {
+/** Cardul unei camere: poza, numele, persoanele și paturile, prețul. Deschide panoul cu detalii. */
+function RoomCard({ room, i, onOpen }) {
   const txt = useTexts(TEXT)
   return (
     <Reveal as="li" className="rcard" i={i}>
       <button
         type="button"
         className="rcard__btn"
-        onClick={() => !dragged.current && onOpen(room.id)}
+        onClick={() => onOpen(room.id)}
         aria-label={txt.cardAria(room)}
       >
         <span className="rcard__pic">
-          <Img name={room.img} alt="" sizes="(max-width: 760px) 84vw, 40vw" />
+          <Img name={room.img} alt="" sizes="(max-width: 760px) 92vw, 32vw" />
           <span className="rcard__more">
             {txt.see} <Icon name="arrow" size={16} />
           </span>
@@ -164,48 +80,7 @@ function RoomCard({ room, i, onOpen, dragged }) {
 export default function Rooms() {
   const { ROOMS } = useData()
   const txt = useTexts(TEXT)
-  const track = useRef(null)
-  const dragged = useDragScroll(track)
-  const [progress, setProgress] = useState(0) // cât s-a derulat caruselul, 0 – 1 (bara de sub el)
-  const [atStart, setAtStart] = useState(true) // dezactivează săgeata stângă
-  const [atEnd, setAtEnd] = useState(false) // dezactivează săgeata dreaptă
   const [openId, setOpenId] = useState(null) // camera deschisă în panou
-
-  useEffect(() => {
-    const el = track.current
-    if (!el) return
-    let raf = 0
-    const upd = () => {
-      raf = 0
-      const max = el.scrollWidth - el.clientWidth
-      setProgress(max > 0 ? el.scrollLeft / max : 0)
-      setAtStart(el.scrollLeft < 8)
-      setAtEnd(el.scrollLeft > max - 8)
-      // pozele alunecă puțin în cadru cât timp rândul se mișcă
-      el.querySelectorAll('.rcard__pic img').forEach((img) => {
-        const r = img.parentElement.getBoundingClientRect()
-        const c = (r.left + r.width / 2 - window.innerWidth / 2) / window.innerWidth
-        img.style.transform = `translateX(${(-c * 6).toFixed(2)}%) scale(1.12)`
-      })
-    }
-    const on = () => raf || (raf = requestAnimationFrame(upd))
-    upd()
-    el.addEventListener('scroll', on, { passive: true })
-    window.addEventListener('resize', on)
-    return () => {
-      cancelAnimationFrame(raf)
-      el.removeEventListener('scroll', on)
-      window.removeEventListener('resize', on)
-    }
-  }, [])
-
-  // săgețile: un card la stânga (-1) sau la dreapta (+1); 24 = spațiul dintre carduri
-  const scrollByCard = (dir) => {
-    const el = track.current
-    const card = el?.querySelector('.rcard')
-    if (!el || !card) return
-    el.scrollBy({ left: dir * (card.offsetWidth + 24), behavior: 'smooth' })
-  }
 
   return (
     <section id="camere" className="rooms" aria-labelledby="camere-h">
@@ -225,46 +100,37 @@ export default function Rooms() {
         </div>
       </div>
 
-      <ul ref={track} className="rooms__track" aria-label={txt.track} data-drag>
+      {/* cele trei tipuri de cameră, una lângă alta (pe telefon, una sub alta) */}
+      <ul className="rooms__grid wrap" aria-label={txt.track}>
         {ROOMS.map((r, i) => (
-          <RoomCard key={r.id} room={r} i={i} onOpen={setOpenId} dragged={dragged} />
+          <RoomCard key={r.id} room={r} i={i} onOpen={setOpenId} />
         ))}
-        <Reveal as="li" className="rcard rcard--info" i={3}>
-          <div className="rinfo">
-            <p className="rinfo__h">{txt.know}</p>
-            <ul className="rinfo__list">
-              <li>
-                <Icon name="clock" size={18} /> {txt.k1}
-              </li>
-              <li>
-                <Icon name="bed" size={18} /> {txt.k2}
-              </li>
-              <li>
-                <Icon name="check" size={18} /> {txt.k3}
-              </li>
-              <li>
-                <Icon name="paw" size={18} /> {txt.k4}
-              </li>
-            </ul>
+      </ul>
+
+      {/* banda verde „Bine de știut”: titlul și butonul în stânga, regulile casei alături */}
+      <div className="wrap">
+        <Reveal className="rinfo">
+          <div className="rinfo__head">
+            <h3 className="rinfo__h">{txt.know}</h3>
             <button type="button" className="btn btn--line rinfo__go" onClick={() => openBooking({ type: 'Cazare' })}>
               {txt.check}
             </button>
           </div>
+          <ul className="rinfo__list">
+            <li>
+              <Icon name="clock" size={20} /> {txt.k1}
+            </li>
+            <li>
+              <Icon name="bed" size={20} /> {txt.k2}
+            </li>
+            <li>
+              <Icon name="check" size={20} /> {txt.k3}
+            </li>
+            <li>
+              <Icon name="paw" size={20} /> {txt.k4}
+            </li>
+          </ul>
         </Reveal>
-      </ul>
-
-      <div className="rooms__ctrl wrap">
-        <div className="rooms__bar" aria-hidden="true">
-          <span style={{ transform: `scaleX(${0.25 + progress * 0.75})` }} />
-        </div>
-        <div className="rooms__arrows">
-          <button type="button" className="rarrow" onClick={() => scrollByCard(-1)} disabled={atStart} aria-label={txt.prev}>
-            <Icon name="left" size={20} />
-          </button>
-          <button type="button" className="rarrow" onClick={() => scrollByCard(1)} disabled={atEnd} aria-label={txt.next}>
-            <Icon name="right" size={20} />
-          </button>
-        </div>
       </div>
 
       <RoomPanel id={openId} onClose={() => setOpenId(null)} />

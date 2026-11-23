@@ -1,4 +1,4 @@
-// Pe calculator, peste caruselele care se trag (camere, galerie), cursorul devine un cerc cu „Trage”.
+// Pe calculator, peste rândurile care se trag (acum: galeria), cursorul devine un cerc cu „Trage”.
 //
 // Un carusel se marchează cu atributul data-drag pe elementul lui. Cercul urmează mouse-ul cu o mică
 // întârziere (se apropie cu 22% din distanță la fiecare cadru), ca să pară că plutește.

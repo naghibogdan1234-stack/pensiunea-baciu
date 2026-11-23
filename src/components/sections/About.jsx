@@ -41,11 +41,12 @@ export default function About() {
       <div className="about__tiles">
         <div className="about__photo">
           <Shutter name="fatada" alt={txt.alt} sizes="(max-width: 760px) 100vw, 62vw" />
+        </div>
+        {/* panoul verde: pe scurt ce găsești, cifrele, vremea de acum; poza din stânga ia înălțimea lui */}
+        <div className="about__tile">
           <Reveal as="p" className="about__note">
             {txt.note}
           </Reveal>
-        </div>
-        <div className="about__tile">
           <dl className="facts">
             <div>
               <dt>{txt.altitude}</dt>

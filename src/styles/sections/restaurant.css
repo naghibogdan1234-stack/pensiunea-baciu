@@ -5,13 +5,17 @@
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   column-gap: var(--gap);
-  align-items: center;
+  align-items: start;
 }
+/* textul pornește de la marginea de sus a pozei și o însoțește la scroll până la capătul ei */
 .resto__text {
   grid-column: 1 / 6;
   display: flex;
   flex-direction: column;
   gap: 28px;
+  position: sticky;
+  top: clamp(110px, 16vh, 170px);
+  padding-top: clamp(8px, 4vh, 48px);
 }
 .resto__info {
   display: flex;
@@ -43,25 +47,27 @@
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   column-gap: var(--gap);
+  row-gap: 18px;
   margin-top: clamp(70px, 9vw, 140px);
-  align-items: end;
 }
+/* rândul 1: cele două poze, aceeași înălțime (o dă poza sălii); rândul 2: textele */
 .resto__hall {
   grid-column: 1 / 8;
-}
-.resto__hall .shutter {
   aspect-ratio: 16 / 10;
 }
+.resto__evpic {
+  grid-column: 8 / 13;
+  grid-row: 1;
+  height: 100%;
+}
+.resto__hallcap {
+  grid-column: 1 / 8;
+}
 .resto__events {
-  grid-column: 9 / 13;
+  grid-column: 8 / 13;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-}
-.resto__events .shutter {
-  aspect-ratio: 4 / 5;
-  width: 74%;
-  margin-bottom: 10px;
+  gap: 14px;
 }
 
 @media (max-width: 1180px) {
@@ -81,17 +87,27 @@
     align-items: stretch;
     gap: 40px;
   }
+  .resto__text {
+    position: static;
+    padding-top: 0;
+  }
   .resto__big .shutter {
     aspect-ratio: 4 / 3;
   }
-  .resto__events .shutter {
-    width: 64%;
+  /* una sub alta: sala, textul ei, sala de evenimente, textul ei */
+  .resto__pair {
+    gap: 16px;
   }
-}
-
-@media (max-width: 760px) {
-  .resto__events .shutter {
-    width: 100%;
+  .resto__hallcap {
+    order: 1;
+    margin-bottom: 24px;
+  }
+  .resto__evpic {
+    order: 2;
+    height: auto;
     aspect-ratio: 4 / 3;
+  }
+  .resto__events {
+    order: 3;
   }
 }

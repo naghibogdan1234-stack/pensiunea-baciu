@@ -2,6 +2,7 @@
 // și citatele din recenzii care se derulează singure. Datele: RATINGS, SUBSCORES, REVIEWS (data/content.js).
 import { Reveal, MaskText, useInViewOnce } from '../../lib/motion.jsx'
 import { useData } from '../../data/index.js'
+import { Img } from '../../lib/Img.jsx'
 import { useTexts, useLang } from '../../i18n.jsx'
 
 const TEXT = {
@@ -24,6 +25,28 @@ const TEXT = {
 }
 
 // o stea (desen SVG); notele se arată ca 5 stele goale peste care se umple o bandă de lățimea notei
+/**
+ * Poza autorului recenziei. Nu folosim pozele de profil ale oamenilor fără acordul lor, așa că, implicit,
+ * apare un cerc cu inițialele (ca la Google, pentru cine n-are poză). Dacă pensiunea primește o poză cu acord,
+ * o pui în public/img/ și scrii numele ei la recenzie, în content.js: photo: 'recenzie-ioana'.
+ */
+function Avatar({ review }) {
+  if (review.photo) return <Img className="quote__av" name={review.photo} alt="" sizes="48px" />
+  const initials = review.name
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join('')
+    .toUpperCase()
+  // trei nuanțe din paleta site-ului, alese după nume, ca vecinii să nu aibă aceeași culoare
+  const tone = [...review.name].reduce((sum, ch) => sum + ch.charCodeAt(0), 0) % 3
+  return (
+    <span className={`quote__av quote__av--${tone}`} aria-hidden="true">
+      {initials}
+    </span>
+  )
+}
+
 const STAR = 'M12 2.6l2.9 6 6.5.8-4.8 4.5 1.2 6.5L12 17.3l-5.8 3.1 1.2-6.5L2.6 9.4l6.5-.8Z'
 function StarRow() {
   return (
@@ -71,15 +94,18 @@ function Quote({ r }) {
         <p>{en ? '“' : '„'}{r.text}”</p>
       </blockquote>
       <figcaption>
-        <span className="quote__name">{r.name}</span>
-        <span className="quote__meta">
-          {r.who}
-          {r.date ? ` · ${r.date}` : ''}
-        </span>
-        <span className="quote__src">
-          {r.src}
-          {r.score ? <span className="num"> · {r.score}</span> : null}
-          {r.tr ? <em> · {r.tr}</em> : null}
+        <Avatar review={r} />
+        <span className="quote__who">
+          <span className="quote__name">{r.name}</span>
+          <span className="quote__meta">
+            {r.who}
+            {r.date ? ` · ${r.date}` : ''}
+          </span>
+          <span className="quote__src">
+            {r.src}
+            {r.score ? <span className="num"> · {r.score}</span> : null}
+            {r.tr ? <em> · {r.tr}</em> : null}
+          </span>
         </span>
       </figcaption>
     </figure>

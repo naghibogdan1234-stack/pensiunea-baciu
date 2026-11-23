@@ -333,6 +333,22 @@ export default function MenuBook() {
         </Reveal>
       </div>
 
+      {/* capitolele (sar la pagina lor) și varianta listă, sub titlu, deasupra cărții */}
+      <div className="menu__bar wrap">
+        <ul className="chips" aria-label={txt.chapters}>
+          {CHAPTERS.map((c) => (
+            <li key={c.title}>
+              <button type="button" className={`chip ${activeChapter === c.title && page > 0 ? 'on' : ''}`} onClick={() => goTo(c.page)}>
+                {c.title}
+              </button>
+            </li>
+          ))}
+        </ul>
+        <button type="button" className="menu__listbtn" onClick={() => setListOpen(true)}>
+          <Icon name="list" size={18} /> {txt.asList}
+        </button>
+      </div>
+
       <div className="menu__stage" ref={stageRef}>
         <picture className="menu__table" aria-hidden="true">
           <source media="(max-width: 819px)" srcSet="img/masa-telefon-s.webp 576w, img/masa-telefon.webp 1152w" sizes="100vw" />
@@ -360,20 +376,6 @@ export default function MenuBook() {
         </p>
       </div>
 
-      <div className="menu__bar wrap">
-        <ul className="chips" aria-label={txt.chapters}>
-          {CHAPTERS.map((c) => (
-            <li key={c.title}>
-              <button type="button" className={`chip ${activeChapter === c.title && page > 0 ? 'on' : ''}`} onClick={() => goTo(c.page)}>
-                {c.title}
-              </button>
-            </li>
-          ))}
-        </ul>
-        <button type="button" className="menu__listbtn" onClick={() => setListOpen(true)}>
-          <Icon name="list" size={18} /> {txt.asList}
-        </button>
-      </div>
       <MenuList open={listOpen} onClose={() => setListOpen(false)} />
     </section>
   )

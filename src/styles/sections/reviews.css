@@ -166,10 +166,41 @@
   line-height: 1.3;
 }
 .quote figcaption {
-  display: grid;
-  gap: 2px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
   font-size: 0.9rem;
   color: var(--on-forest-muted);
+}
+.quote__who {
+  display: grid;
+  gap: 2px;
+}
+/* poza autorului: inițialele într-un cerc, sau poza, dacă există (Reviews.jsx, Avatar) */
+.quote__av {
+  flex: none;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  object-fit: cover;
+  font-family: var(--f-serif);
+  font-size: 1.15rem;
+  letter-spacing: 0.02em;
+  line-height: 1;
+}
+.quote__av--0 {
+  background: var(--brass);
+  color: var(--forest);
+}
+.quote__av--1 {
+  background: var(--on-forest);
+  color: var(--forest);
+}
+.quote__av--2 {
+  background: color-mix(in srgb, var(--on-forest) 18%, transparent);
+  color: var(--on-forest);
 }
 .quote__name {
   font-weight: 500;
